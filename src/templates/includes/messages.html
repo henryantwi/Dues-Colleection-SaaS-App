@@ -1,0 +1,28 @@
+<messages>
+    {% if messages %}
+    <div x-data="{ showMessage: false }">
+    {% for message in messages %}
+    <div class="fixed top-24 left-0 right-0 max-w-xl mx-auto px-4 z-50">
+        <div x-cloak 
+             class="glass-card alert-{{ message.tags }} flex items-center py-4 px-6 border" 
+             role="alert"
+             x-show="showMessage"
+             x-init="setTimeout(() => showMessage = true, 200), setTimeout(() => showMessage = false, 6000)"
+             x-transition:enter="transition duration-500 ease-out"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition duration-300 ease-in"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95">
+            <div class="flex-1 text-lg font-medium">{{ message }}</div>
+            <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" @click="showMessage = false">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+</messages>

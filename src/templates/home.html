@@ -1,0 +1,60 @@
+{% extends 'layouts/blank.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <div class="absolute inset-0">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 blur-3xl"></div>
+        <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-accent/20 to-transparent rounded-full blur-3xl"></div>
+    </div>
+    <div class="container mx-auto relative px-4 py-8">
+        <div class="text-center max-w-3xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8">Student Association Dues Payment</h1>
+            {% if user.is_authenticated %}
+                {% if user.is_department_admin %}
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-semibold mb-4">{{ user.department.name }} Department Admin</h2>
+                        <div class="flex gap-4 justify-center">
+                            <a href="{% url 'students:admin_dashboard' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg">
+                                <span>Go to Dashboard</span>
+                            </a>
+                            <a href="{% url 'students:search' %}" class="bg-white text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm">
+                                Search Students
+                            </a>
+                        </div>
+                    </div>
+                {% elif user.is_superuser %}
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-semibold mb-4">System Administrator</h2>
+                        <div class="flex gap-4 justify-center">
+                            <a href="{% url 'admin:index' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg">
+                                <span>Admin Panel</span>
+                            </a>
+                            <a href="{% url 'students:search' %}" class="bg-white text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm">
+                                Search Students
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="prose prose-lg mx-auto mb-8">
+                    <p>Welcome to the Student Association Dues Payment System. To make a payment, please use the registration link provided by your department.</p>
+                    <p class="font-medium">Example: /students/register/[department-slug]/[year-one]/</p>
+                </div>
+                
+                <div class="bg-blue-100 rounded-lg p-6 text-left">
+                    <h2 class="text-xl font-semibold mb-4">For Department Administrators</h2>
+                    <p class="mb-4">If you are a department administrator, please sign in to access your dashboard.</p>
+                    <a href="{% url 'login' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg inline-block">
+                        <span>Sign In</span>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+</div>
+{% endblock content %}
+
+
