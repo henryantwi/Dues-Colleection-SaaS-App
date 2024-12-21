@@ -17,7 +17,7 @@
                         <h2 class="text-2xl font-semibold mb-4">{{ user.department.name }} Department Admin</h2>
                         <div class="flex gap-4 justify-center">
                             <a href="{% url 'students:admin_dashboard' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg">
-                                <span>Go to Dashboard</span>
+                                <span class="text-white">Go to Dashboard</span>
                             </a>
                             <a href="{% url 'students:search' %}" class="bg-white text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm">
                                 Search Students
@@ -29,7 +29,7 @@
                         <h2 class="text-2xl font-semibold mb-4">System Administrator</h2>
                         <div class="flex gap-4 justify-center">
                             <a href="{% url 'admin:index' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg">
-                                <span>Admin Panel</span>
+                                <span class="text-white">Admin Panel</span>
                             </a>
                             <a href="{% url 'students:search' %}" class="bg-white text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm">
                                 Search Students

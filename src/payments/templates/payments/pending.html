@@ -1,0 +1,80 @@
+{% extends 'layouts/box.html' %}
+
+{% block title %}Payment Pending{% endblock %}
+
+{% block content %}
+<div class="divide-y divide-gray-200">
+    <!-- Header Section -->
+    <div class="card-section bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8">
+        <div class="flex items-center justify-between">
+            <div class="space-y-4">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-amber-600">
+                        Payment Pending
+                    </span>
+                </h1>
+                <div class="flex flex-wrap gap-2">
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        Awaiting Verification
+                    </span>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="w-20 h-20 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="card-content p-8 space-y-8">
+        <!-- Amount Card -->
+        <div class="bg-gradient-to-br from-yellow-500 to-amber-600 rounded-2xl p-8 text-white shadow-xl transform hover:scale-[1.02] transition-transform duration-300">
+            // ... amount card content ...
+        </div>
+
+        <!-- Payment Info -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            // ... payment details content ...
+        </div>
+
+        {% if payment.method == 'Cash' %}
+        <!-- Next Steps -->
+        <div class="bg-blue-50 rounded-2xl p-6 border border-blue-100">
+            <h3 class="text-lg font-semibold text-blue-900 mb-4">Next Steps</h3>
+            <ol class="space-y-4">
+                {% for step in steps %}
+                <li class="flex items-start">
+                    <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-200 text-blue-600 font-medium text-sm">
+                        {{ forloop.counter }}
+                    </div>
+                    <span class="ml-3 text-blue-800">{{ step }}</span>
+                </li>
+                {% endfor %}
+            </ol>
+        </div>
+        {% endif %}
+
+        <!-- Action Button -->
+        <div class="flex justify-end">
+            <a href="{% url 'home' %}" 
+               class="inline-flex items-center justify-center space-x-2 h-16 px-8 rounded-2xl font-bold text-lg
+                      bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900
+                      border-2 border-gray-300 shadow-md hover:shadow-lg
+                      focus:ring-4 focus:ring-gray-200 transform hover:-translate-y-0.5
+                      transition-all duration-200 ease-in-out">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span>Return to Home</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

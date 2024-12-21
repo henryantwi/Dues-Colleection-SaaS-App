@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "a_home",
     "students",
     "payments",
+    "widget_tweaks",
 ]
 
 MIDDLEWARE = [
@@ -113,9 +114,9 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Login/Logout Settings
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -124,15 +125,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
-    'administrators.auth.EmailBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    "administrators.auth.EmailBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 # Add after AUTHENTICATION_BACKENDS
-AUTH_USER_MODEL = 'auth.User'
+AUTH_USER_MODEL = "auth.User"
 
 # Configure email as required field
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_AUTHENTICATION_METHOD = "email"

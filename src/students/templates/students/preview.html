@@ -1,0 +1,123 @@
+{% extends 'layouts/box.html' %}
+
+{% block title %}Review Registration{% endblock %}
+
+{% block content %}
+<div class="divide-y divide-gray-200">
+    <!-- Header Section -->
+    <div class="card-section bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8">
+        <div class="flex items-center justify-between">
+            <div class="space-y-4">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                        Review Registration
+                    </span>
+                </h1>
+                <div class="flex flex-wrap gap-2">
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Confirm Details
+                    </span>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="card-content p-8 space-y-8">
+        <!-- Amount Card -->
+        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-8 text-white shadow-xl transform hover:scale-[1.02] transition-transform duration-300">
+            <div class="flex justify-between items-center">
+                <div class="space-y-2">
+                    <p class="text-blue-100 text-sm uppercase tracking-wider">Amount to Pay</p>
+                    <p class="text-4xl font-bold tracking-tight">GH₵{{ preview_data.amount }}</p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Container -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="px-8 py-5 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-100">
+                <h2 class="text-xl font-bold text-gray-800">Student Information</h2>
+            </div>
+            <div class="p-8">
+                <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+                        <dd class="text-lg font-medium text-gray-900">{{ preview_data.full_name }}</dd>
+                    </div>
+                    <div class="space-y-2">
+                        <dt class="text-sm font-medium text-gray-500">Reference Number</dt>
+                        <dd class="text-lg font-mono text-gray-900">{{ preview_data.ref_number }}</dd>
+                    </div>
+                    <div class="space-y-2">
+                        <dt class="text-sm font-medium text-gray-500">Email</dt>
+                        <dd class="text-lg text-gray-900">{{ preview_data.email }}</dd>
+                    </div>
+                    <div class="space-y-2">
+                        <dt class="text-sm font-medium text-gray-500">Mobile</dt>
+                        <dd class="text-lg text-gray-900">{{ preview_data.mobile }}</dd>
+                    </div>
+                    <div class="space-y-2">
+                        <dt class="text-sm font-medium text-gray-500">Department</dt>
+                        <dd class="text-lg text-gray-900">{{ preview_data.department }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button type="submit" 
+                    form="edit-form" 
+                    name="edit" 
+                    class="h-16 rounded-2xl font-bold text-lg
+                        bg-gradient-to-r from-gray-50 to-gray-100
+                        hover:from-gray-100 hover:to-gray-200
+                        border-2 border-gray-300 text-gray-700
+                        hover:border-gray-400 hover:text-gray-900
+                        shadow-md hover:shadow-lg
+                        focus:ring-4 focus:ring-gray-200 
+                        transform hover:-translate-y-0.5
+                        transition-all duration-200 ease-in-out
+                        flex items-center justify-center gap-3 px-8">
+                {% comment %} <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+                </svg> {% endcomment %}
+                <span class="flex-shrink-0 text-gray-900">Edit Information</span>
+            </button>
+            
+            <button type="submit" form="confirm-form" name="confirm"
+                    class="h-16 rounded-2xl font-bold text-lg text-white shadow-xl
+                           bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600
+                           hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700
+                           focus:ring-4 focus:ring-blue-300 transform hover:-translate-y-0.5
+                           transition-all duration-200 ease-in-out
+                           flex items-center justify-center gap-3 px-8">
+                <span class="flex-shrink-0">Proceed to Payment</span>
+                {% comment %} <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg> {% endcomment %}
+            </button>
+        </div>
+
+        <!-- Hidden Forms -->
+        <form id="edit-form" method="post" class="hidden">{% csrf_token %}</form>
+        <form id="confirm-form" method="post" class="hidden">{% csrf_token %}</form>
+    </div>
+</div>
+{% endblock %}
