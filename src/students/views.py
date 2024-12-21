@@ -1,185 +1,241 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
-from django.db.models import Sum, Count
-from .models import Department, Student
-from .forms import StudentRegistrationForm
-from payments.forms import PaymentForm
-from payments.models import Payment
-from django.db.models import Q
-import requests
 import json
 import uuid
 
+import requests
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.db.models import Count, Q, Sum
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+
+from payments.forms import PaymentForm
+from payments.models import Payment
+
+from .forms import StudentRegistrationForm
+from .models import Department, Student
+
+
 def student_registration(request, department_id, is_year_one=False):
     department = get_object_or_404(Department, id=department_id)
-    
+
     # Check if there's preview data for edit action
-    preview_data = request.session.get('registration_preview', {})
-    
-    if request.method == 'POST':
+    preview_data = request.session.get("registration_preview", {})
+
+    if request.method == "POST":
         # Validate form data
         form_data = {
-            'ref_number': request.POST.get('ref_number'),
-            'full_name': request.POST.get('full_name'),
-            'email': request.POST.get('email'),
-            'mobile': request.POST.get('mobile'),
-            'payment_method': request.POST.get('payment_method'),
+            "ref_number": request.POST.get("ref_number"),
+            "full_name": request.POST.get("full_name"),
+            "email": request.POST.get("email"),
+            "mobile": request.POST.get("mobile"),
+            "payment_method": request.POST.get("payment_method"),
         }
-        
+
         # Check if all fields are filled
         if not all(form_data.values()):
-            messages.error(request, 'All fields are required.')
-            return render(request, 'students/registration.html', {
-                'department': department,
-                'is_year_one': is_year_one,
-                'amount': department.year_one_amount if is_year_one else department.other_years_amount,
-                **form_data
-            })
+            messages.error(request, "All fields are required.")
+            return render(
+                request,
+                "students/registration.html",
+                {
+                    "department": department,
+                    "is_year_one": is_year_one,
+                    "amount": (
+                        department.year_one_amount
+                        if is_year_one
+                        else department.other_years_amount
+                    ),
+                    **form_data,
+                },
+            )
 
         # Check if student already exists
-        if Student.objects.filter(ref_number=form_data['ref_number']).exists():
-            messages.error(request, 'A student with this reference number already exists.')
-            return render(request, 'students/registration.html', {
-                'department': department,
-                'is_year_one': is_year_one,
-                'amount': department.year_one_amount if is_year_one else department.other_years_amount,
-                **form_data
-            })
+        if Student.objects.filter(ref_number=form_data["ref_number"]).exists():
+            messages.error(
+                request, "A student with this reference number already exists."
+            )
+            return render(
+                request,
+                "students/registration.html",
+                {
+                    "department": department,
+                    "is_year_one": is_year_one,
+                    "amount": (
+                        department.year_one_amount
+                        if is_year_one
+                        else department.other_years_amount
+                    ),
+                    **form_data,
+                },
+            )
 
         # Store preview data in session
         preview_data = {
             **form_data,
-            'department_id': department.id,
-            'department_name': department.name,
-            'is_year_one': is_year_one,
-            'amount': float(department.year_one_amount if is_year_one else department.other_years_amount)
+            "department_id": department.id,
+            "department_name": department.name,
+            "is_year_one": is_year_one,
+            "amount": float(
+                department.year_one_amount
+                if is_year_one
+                else department.other_years_amount
+            ),
         }
-        request.session['registration_preview'] = preview_data
+        request.session["registration_preview"] = preview_data
 
         # Redirect to preview page
-        return redirect('students:registration_preview')
+        return redirect("students:registration_preview")
 
     # GET request
-    if 'edit' in request.GET:
+    if "edit" in request.GET:
         # Don't clear preview data if editing
-        return render(request, 'students/registration.html', {
-            'department': department,
-            'is_year_one': is_year_one,
-            'amount': department.year_one_amount if is_year_one else department.other_years_amount,
-            'ref_number': preview_data.get('ref_number', ''),
-            'full_name': preview_data.get('full_name', ''),
-            'email': preview_data.get('email', ''),
-            'mobile': preview_data.get('mobile', ''),
-            'payment_method': preview_data.get('payment_method', '')
-        })
-    
+        return render(
+            request,
+            "students/registration.html",
+            {
+                "department": department,
+                "is_year_one": is_year_one,
+                "amount": (
+                    department.year_one_amount
+                    if is_year_one
+                    else department.other_years_amount
+                ),
+                "ref_number": preview_data.get("ref_number", ""),
+                "full_name": preview_data.get("full_name", ""),
+                "email": preview_data.get("email", ""),
+                "mobile": preview_data.get("mobile", ""),
+                "payment_method": preview_data.get("payment_method", ""),
+            },
+        )
+
     # Clear preview data for fresh registration
-    request.session.pop('registration_preview', None)
-    return render(request, 'students/registration.html', {
-        'department': department,
-        'is_year_one': is_year_one,
-        'amount': department.year_one_amount if is_year_one else department.other_years_amount
-    })
+    request.session.pop("registration_preview", None)
+    return render(
+        request,
+        "students/registration.html",
+        {
+            "department": department,
+            "is_year_one": is_year_one,
+            "amount": (
+                department.year_one_amount
+                if is_year_one
+                else department.other_years_amount
+            ),
+        },
+    )
+
 
 def registration_preview(request):
-    preview_data = request.session.get('registration_preview')
-    
+    preview_data = request.session.get("registration_preview")
+
     if not preview_data:
-        messages.error(request, 'No registration data found. Please start over.')
-        return redirect('students:registration', department_id=1)  # Replace with default department ID
-    
-    if request.method == 'POST':
-        if 'edit' in request.POST:
+        messages.error(request, "No registration data found. Please start over.")
+        return redirect(
+            "students:registration", department_id=1
+        )  # Replace with default department ID
+
+    if request.method == "POST":
+        if "edit" in request.POST:
             # Keep preview data and redirect back to registration with edit flag
-            return redirect(f"{reverse('students:registration', kwargs={'department_id': preview_data['department_id']})}?edit=true")
-        
-        elif 'confirm' in request.POST:
+            return redirect(
+                f"{reverse('students:registration', kwargs={'department_id': preview_data['department_id']})}?edit=true"
+            )
+
+        elif "confirm" in request.POST:
             try:
-                department = get_object_or_404(Department, id=preview_data['department_id'])
-                
+                department = get_object_or_404(
+                    Department, id=preview_data["department_id"]
+                )
+
                 # Create payment first
                 payment = Payment.objects.create(
                     department=department,
-                    method=preview_data['payment_method'],
-                    amount=preview_data['amount'],
-                    status='Pending'
+                    method=preview_data["payment_method"],
+                    amount=preview_data["amount"],
+                    status="Pending",
                 )
 
                 # Create student
                 student = Student.objects.create(
-                    ref_number=preview_data['ref_number'],
-                    full_name=preview_data['full_name'],
-                    email=preview_data['email'],
-                    mobile=preview_data['mobile'],
+                    ref_number=preview_data["ref_number"],
+                    full_name=preview_data["full_name"],
+                    email=preview_data["email"],
+                    mobile=preview_data["mobile"],
                     department=department,
-                    payment=payment
+                    payment=payment,
                 )
 
                 # Clear preview data
-                request.session.pop('registration_preview', None)
+                request.session.pop("registration_preview", None)
 
                 # Handle payment method
-                if preview_data['payment_method'] == 'Mobile Money':
+                if preview_data["payment_method"] == "Mobile Money":
                     try:
                         headers = {
-                            'Authorization': f'Bearer {department.paystack_secret_key}',
-                            'Content-Type': 'application/json',
+                            "Authorization": f"Bearer {department.paystack_secret_key}",
+                            "Content-Type": "application/json",
                         }
                         data = {
-                            'email': preview_data['email'],
-                            'amount': int(preview_data['amount'] * 100),
-                            'callback_url': request.build_absolute_uri(
-                                reverse('payments:verify_payment', args=[payment.reference])
+                            "email": preview_data["email"],
+                            "amount": int(preview_data["amount"] * 100),
+                            "callback_url": request.build_absolute_uri(
+                                reverse(
+                                    "payments:verify_payment", args=[payment.reference]
+                                )
                             ),
-                            'reference': payment.reference,
+                            "reference": payment.reference,
                         }
                         response = requests.post(
-                            'https://api.paystack.co/transaction/initialize',
+                            "https://api.paystack.co/transaction/initialize",
                             headers=headers,
-                            data=json.dumps(data)
+                            data=json.dumps(data),
                         )
-                        
-                        response_data = response.json()
-                        if response.status_code == 200 and response_data.get('status'):
-                            return redirect(response_data['data']['authorization_url'])
-                    except Exception as e:
-                        payment.status = 'Failed'
-                        payment.save()
-                        messages.error(request, f'Payment processing error: {str(e)}')
 
-                return redirect('students:registration_confirmation', student_id=student.id)
+                        response_data = response.json()
+                        if response.status_code == 200 and response_data.get("status"):
+                            return redirect(response_data["data"]["authorization_url"])
+                    except Exception as e:
+                        payment.status = "Failed"
+                        payment.save()
+                        messages.error(request, f"Payment processing error: {str(e)}")
+
+                return redirect(
+                    "students:registration_confirmation", student_id=student.id
+                )
 
             except Exception as e:
-                messages.error(request, f'Registration failed: {str(e)}')
-                return render(request, 'students/preview.html', {'preview_data': preview_data})
+                messages.error(request, f"Registration failed: {str(e)}")
+                return render(
+                    request, "students/preview.html", {"preview_data": preview_data}
+                )
 
-    return render(request, 'students/preview.html', {'preview_data': preview_data})
+    return render(request, "students/preview.html", {"preview_data": preview_data})
+
 
 def registration_confirmation(request, student_id):
     student = get_object_or_404(Student, id=student_id)
-    return render(request, 'students/registration_confirmation.html', {
-        'student': student
-    })
+    return render(
+        request, "students/registration_confirmation.html", {"student": student}
+    )
+
 
 @login_required
 def student_search(request):
-    query = request.GET.get('q', '')
+    query = request.GET.get("q", "")
     if query:
         students = Student.objects.filter(
-            Q(ref_number__icontains=query) |
-            Q(full_name__icontains=query) |
-            Q(email__icontains=query)
-        ).select_related('department', 'payment')
+            Q(ref_number__icontains=query)
+            | Q(full_name__icontains=query)
+            | Q(email__icontains=query)
+        ).select_related("department", "payment")
     else:
         students = Student.objects.none()
 
-    return render(request, 'students/search.html', {
-        'students': students,
-        'query': query
-    })
+    return render(
+        request, "students/search.html", {"students": students, "query": query}
+    )
+
 
 @login_required
 def admin_dashboard(request):
@@ -193,35 +249,41 @@ def admin_dashboard(request):
         if not request.user.is_superuser:
             raise PermissionDenied
         department = None
-    
+
     # Get department statistics
     students_query = Student.objects.all()
     if department:
         students_query = students_query.filter(department=department)
-    
+
     # Get payments for students in this department
-    payments_query = Payment.objects.filter(status='Successful')
+    payments_query = Payment.objects.filter(status="Successful")
     if department:
         payments_query = payments_query.filter(department=department)
-    
-    total_amount = payments_query.aggregate(total=Sum('amount'))['total'] or 0
+
+    total_amount = payments_query.aggregate(total=Sum("amount"))["total"] or 0
     total_students = students_query.count()
-    paid_students = students_query.filter(payment__status='Successful').count()
+    paid_students = students_query.filter(payment__status="Successful").count()
     pending_payments = Payment.objects.filter(
-        status='Pending',
-        department=department if department else None
+        status="Pending", department=department if department else None
     ).count()
-    
+
     # Get recent payments
-    recent_payments = Payment.objects.filter(
-        department=department if department else None
-    ).select_related('department').prefetch_related('students').order_by('-created_at')[:5]
-    
-    return render(request, 'students/admin_dashboard.html', {
-        'department': department,
-        'total_amount': total_amount,
-        'total_students': total_students,
-        'paid_students': paid_students,
-        'pending_payments': pending_payments,
-        'recent_payments': recent_payments
-    })
+    recent_payments = (
+        Payment.objects.filter(department=department if department else None)
+        .select_related("department")
+        .prefetch_related("students")
+        .order_by("-created_at")[:5]
+    )
+
+    return render(
+        request,
+        "students/admin_dashboard.html",
+        {
+            "department": department,
+            "total_amount": total_amount,
+            "total_students": total_students,
+            "paid_students": paid_students,
+            "pending_payments": pending_payments,
+            "recent_payments": recent_payments,
+        },
+    )
