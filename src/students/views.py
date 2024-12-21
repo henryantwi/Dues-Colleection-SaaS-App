@@ -8,6 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from icecream import ic
 
 from payments.forms import PaymentForm
 from payments.models import Payment
@@ -156,20 +157,7 @@ def registration_preview(request):
                     status="Pending",
                 )
 
-                # Create student
-                student = Student.objects.create(
-                    ref_number=preview_data["ref_number"],
-                    full_name=preview_data["full_name"],
-                    email=preview_data["email"],
-                    mobile=preview_data["mobile"],
-                    department=department,
-                    payment=payment,
-                )
-
-                # Clear preview data
-                request.session.pop("registration_preview", None)
-
-                # Handle payment method
+                # Handle payment method before creating student
                 if preview_data["payment_method"] == "Mobile Money":
                     try:
                         headers = {
@@ -194,22 +182,62 @@ def registration_preview(request):
 
                         response_data = response.json()
                         if response.status_code == 200 and response_data.get("status"):
+                            # Create student only after successful payment initialization
+                            student = Student.objects.create(
+                                ref_number=preview_data["ref_number"],
+                                full_name=preview_data["full_name"],
+                                email=preview_data["email"],
+                                mobile=preview_data["mobile"],
+                                department=department,
+                                payment=payment,
+                            )
+                            # Clear preview data
+                            request.session.pop("registration_preview", None)
                             return redirect(response_data["data"]["authorization_url"])
                     except Exception as e:
                         payment.status = "Failed"
                         payment.save()
                         messages.error(request, f"Payment processing error: {str(e)}")
-
-                return redirect(
-                    "students:registration_confirmation", student_id=student.id
-                )
-
+                        # Return to preview page with data intact
+                        return render(
+                            request, "students/preview.html", {"preview_data": preview_data}
+                        )
+                elif preview_data["payment_method"] == "Cash":
+                    try:
+                        # Create student for cash payment
+                        student = Student.objects.create(
+                            ref_number=preview_data["ref_number"],
+                            full_name=preview_data["full_name"],
+                            email=preview_data["email"],
+                            mobile=preview_data["mobile"],
+                            department=department,
+                            payment=payment,
+                        )
+                        # Update payment status for cash
+                        payment.status = "Pending Verification"
+                        payment.save()
+                        
+                        # Clear preview data
+                        request.session.pop("registration_preview", None)
+                        
+                        messages.success(request, "Registration successful. Please make cash payment at the department office.")
+                        return redirect("students:registration_confirmation", student_id=student.id)
+                        
+                    except Exception as e:
+                        payment.status = "Failed"
+                        payment.save()
+                        messages.error(request, f"Registration error: {str(e)}")
+                        return render(
+                            request, "students/preview.html", {"preview_data": preview_data}
+                        )
+              
             except Exception as e:
-                messages.error(request, f"Registration failed: {str(e)}")
+                messages.error(request, f"Error processing payment: {str(e)}")
+                # Return to preview page with data intact
                 return render(
                     request, "students/preview.html", {"preview_data": preview_data}
-                )
-
+                )  
+        
     return render(request, "students/preview.html", {"preview_data": preview_data})
 
 

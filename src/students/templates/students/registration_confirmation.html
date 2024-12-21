@@ -67,7 +67,10 @@
                     <p class="text-4xl font-bold tracking-tight">GH₵{{ student.payment.amount|floatformat:2 }}</p>
                 </div>
                 <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
-                    // ... payment icon ...
+                    <!-- Payment Icon -->
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+                    </svg>
                 </div>
             </div>
         </div>
@@ -106,6 +109,57 @@
                 </dl>
             </div>
         </div>
+
+        {% if student.payment.status != 'Failed' %}
+        <!-- Instructions Card -->
+        <div class="bg-blue-50 rounded-2xl p-6 border border-blue-100">
+            <h3 class="text-lg font-semibold text-blue-900 mb-4">Next Steps</h3>
+            <div class="space-y-4">
+                <!-- Unique Code Notice -->
+                <div class="bg-white/50 rounded-xl p-4 border border-blue-200">
+                    <p class="font-medium text-blue-800">Your Unique Registration Code:</p>
+                    <div class="mt-2 flex items-center gap-3">
+                        <code class="text-lg font-mono bg-blue-100 px-4 py-2 rounded-lg text-blue-700 font-semibold">
+                            {{ student.unique_code }}
+                        </code>
+                        <span class="text-blue-600 text-sm">Keep this code safe!</span>
+                    </div>
+                </div>
+
+                <!-- Steps List -->
+                <ol class="space-y-3">
+                    {% if student.payment.method == 'Cash' %}
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-200 text-blue-600 font-medium text-sm">
+                            1
+                        </div>
+                        <span class="ml-3 text-blue-800">Visit the registration desk to complete your cash payment</span>
+                    </li>
+                    {% endif %}
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-200 text-blue-600 font-medium text-sm">
+                            {% if student.payment.method == 'Cash' %}2{% else %}1{% endif %}
+                        </div>
+                        <span class="ml-3 text-blue-800">Bring your student ID and unique code to the registration desk</span>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-200 text-blue-600 font-medium text-sm">
+                            {% if student.payment.method == 'Cash' %}3{% else %}2{% endif %}
+                        </div>
+                        <span class="ml-3 text-blue-800">Submit your course registration form for processing</span>
+                    </li>
+                </ol>
+
+                <!-- Important Notice -->
+                <div class="mt-4 flex items-start bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <p class="ml-3 text-yellow-700">Your registration will not be complete until you submit your course registration form at the registration desk.</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row justify-end gap-4">
