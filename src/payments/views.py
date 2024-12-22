@@ -5,12 +5,12 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from icecream import ic
 
-from students.models import Student
+from students.models import PendingMomoPayment, Student
 
 from .forms import PaymentForm
 from .models import Payment
@@ -91,41 +91,50 @@ def create_payment(request, student_id):
     )
 
 
+# @csrf_exempt
 def verify_payment(request, reference):
-    payment = get_object_or_404(Payment, reference=reference)
-    department = payment.department
-
-    if payment.status == "Successful":
-        return redirect("payments:payment_success", reference=reference)
-
+    # Get payment record
     try:
-        headers = {
-            "Authorization": f"Bearer {department.paystack_secret_key}",
-        }
+        payment = Payment.objects.get(reference=reference)
+        pending_reg = PendingMomoPayment.objects.get(payment=payment)
+    except Payment.DoesNotExist:
+        messages.error(request, "Invalid payment reference")
+        return redirect("home")
+
+    # Verify with Paystack API
+    try:
+        headers = {"Authorization": f"Bearer {payment.department.paystack_secret_key}"}
         response = requests.get(
             f"https://api.paystack.co/transaction/verify/{reference}", headers=headers
         )
 
         if response.status_code == 200:
             response_data = response.json()
+
             if response_data["data"]["status"] == "success":
                 payment.status = "Successful"
                 payment.save()
 
-                # Send email/SMS confirmation
-                try:
-                    send_payment_confirmation(payment)
-                except:
-                    pass  # Don't fail if notification fails
+                # Create student from pending registration
+                student = Student.objects.create(
+                    ref_number=pending_reg.ref_number,
+                    full_name=pending_reg.full_name,
+                    email=pending_reg.email,
+                    mobile=pending_reg.mobile,
+                    department=pending_reg.department,
+                    payment=payment
+                )
+                # Delete pending registration
+                pending_reg.delete()
+                return redirect('students:registration_confirmation', student_id=student.id)
 
-                return redirect("payments:payment_success", reference=reference)
-    except:
-        pass
+    except Exception as e:
+        payment.status = "Failed"
+        payment.save()
+        messages.error(request, f"Error verifying payment: {str(e)}")
+        return redirect("payments:payment_failed", reference=reference)
 
-    payment.status = "Failed"
-    payment.save()
-    messages.error(request, "Payment verification failed.")
-    return redirect("payments:payment_failed", reference=reference)
+    return redirect("home")
 
 
 @login_required

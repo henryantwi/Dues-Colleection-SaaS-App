@@ -14,7 +14,7 @@ from payments.forms import PaymentForm
 from payments.models import Payment
 
 from .forms import StudentRegistrationForm
-from .models import Department, Student
+from .models import Department, PendingMomoPayment, Student
 
 
 def student_registration(request, department_id, is_year_one=False):
@@ -153,8 +153,7 @@ def registration_preview(request):
                 payment = Payment.objects.create(
                     department=department,
                     method=preview_data["payment_method"],
-                    amount=preview_data["amount"],
-                    status="Pending",
+                    amount=preview_data["amount"]
                 )
 
                 # Handle payment method before creating student
@@ -182,16 +181,15 @@ def registration_preview(request):
 
                         response_data = response.json()
                         if response.status_code == 200 and response_data.get("status"):
-                            # Create student only after successful payment initialization
-                            student = Student.objects.create(
+                            # Store in database instead of session
+                            PendingMomoPayment.objects.create(
                                 ref_number=preview_data["ref_number"],
                                 full_name=preview_data["full_name"],
                                 email=preview_data["email"],
                                 mobile=preview_data["mobile"],
                                 department=department,
-                                payment=payment,
+                                payment=payment
                             )
-                            # Clear preview data
                             request.session.pop("registration_preview", None)
                             return redirect(response_data["data"]["authorization_url"])
                     except Exception as e:
@@ -214,7 +212,7 @@ def registration_preview(request):
                             payment=payment,
                         )
                         # Update payment status for cash
-                        payment.status = "Pending Verification"
+                        payment.status = "Pending"
                         payment.save()
                         
                         # Clear preview data

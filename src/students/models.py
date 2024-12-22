@@ -1,8 +1,10 @@
-from django.db import models
-from django.utils.text import slugify
 import uuid
 
+from django.db import models
+from django.utils.text import slugify
+
 # Create your models here.
+
 
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -24,13 +26,22 @@ class Department(models.Model):
     class Meta:
         verbose_name_plural = "Departments"
 
+
 class Student(models.Model):
     full_name = models.CharField(max_length=200)
     ref_number = models.CharField(max_length=50, unique=True)
     email = models.EmailField()
     mobile = models.CharField(max_length=15)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='students')
-    payment = models.ForeignKey('payments.Payment', on_delete=models.SET_NULL, null=True, blank=True, related_name='students')
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, related_name="students"
+    )
+    payment = models.ForeignKey(
+        "payments.Payment",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="students",
+    )
     unique_code = models.CharField(max_length=10, unique=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -45,4 +56,14 @@ class Student(models.Model):
         return f"{self.full_name} - {self.ref_number}"
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
+
+
+class PendingMomoPayment(models.Model):
+    ref_number = models.CharField(max_length=20, unique=True)
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    mobile = models.CharField(max_length=15)
+    department = models.ForeignKey("Department", on_delete=models.CASCADE)
+    payment = models.OneToOneField("payments.Payment", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
