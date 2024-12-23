@@ -33,7 +33,7 @@ class DepartmentAdmin(models.Model):
         verbose_name_plural = "Department Admins"
         unique_together = ["user", "department"]
 
-    
+
 class CustomUser(User):
     def save(self, *args, **kwargs):
         if not self.username:

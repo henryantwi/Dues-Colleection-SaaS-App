@@ -20,6 +20,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # 'jazzmin',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -137,3 +138,20 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "email"
+
+# JAZZMIN_SETTINGS = {
+#     "site_title": "DuesFlow",
+#     "site_header": "DuesFlow Admin",
+#     "site_brand": "DuesFlow",
+#     "site_logo": "/images/logo.svg",
+#     "welcome_sign": "Welcome to DuesFlow Admin",
+#     "search_model": "students.Student", 
+#     "copyright": "Nesttop Technologies Ltd",
+#     "topmenu_links": [
+#         {"name": "Home", "url": "a_home:home", "permissions": ["auth.view_user"]},
+#         {"name": "Students", "url": "admin:students_student_changelist", "permissions": ["students.view_student"]},
+#         {"name": "Payments", "url": "admin:payments_payment_changelist", "permissions": ["payments.view_payment"]},
+#     ]
+ 
+# }
+# JAZZMIN_SETTINGS["show_ui_builder"] = True

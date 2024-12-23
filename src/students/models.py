@@ -48,7 +48,6 @@ class Student(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.unique_code:
-            # Generate a unique 10-character alphanumeric code
             self.unique_code = str(uuid.uuid4()).upper()[:10]
         super().save(*args, **kwargs)
 
@@ -67,3 +66,7 @@ class PendingMomoPayment(models.Model):
     department = models.ForeignKey("Department", on_delete=models.CASCADE)
     payment = models.OneToOneField("payments.Payment", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Pending Momo Payment"
+        verbose_name_plural = "Pending Momo Payments"
