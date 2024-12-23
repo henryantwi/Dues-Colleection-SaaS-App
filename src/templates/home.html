@@ -16,10 +16,10 @@
                     <div class="mb-8">
                         <h2 class="text-2xl font-semibold mb-4">{{ user.department.name }} Department Admin</h2>
                         <div class="flex gap-4 justify-center">
-                            <a href="{% url 'students:admin_dashboard' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg">
+                            <a href="{% url 'administrators:admin_dashboard' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg">
                                 <span class="text-white">Go to Dashboard</span>
                             </a>
-                            <a href="{% url 'students:search' %}" class="bg-white text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm">
+                            <a href="{% url 'administrators:search' %}" class="bg-white text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm">
                                 Search Students
                             </a>
                         </div>
@@ -46,7 +46,7 @@
                 <div class="bg-blue-100 rounded-lg p-6 text-left">
                     <h2 class="text-xl font-semibold mb-4">For Department Administrators</h2>
                     <p class="mb-4">If you are a department administrator, please sign in to access your dashboard.</p>
-                    <a href="{% url 'login' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg inline-block">
+                    <a href="{% url 'administrators:login' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg inline-block">
                         <span>Sign In</span>
                     </a>
                 </div>
