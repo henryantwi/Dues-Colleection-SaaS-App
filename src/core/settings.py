@@ -10,8 +10,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
-
 INSTALLED_APPS = [
     # 'jazzmin',
     "django.contrib.admin",
@@ -20,7 +18,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "administrators.apps.AdministratorsConfig",  # Update this line
+    "administrators.apps.AdministratorsConfig",  # or just 'administrators'
     "a_home",
     "students",
     "payments",
@@ -58,14 +56,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -82,7 +78,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -94,15 +89,13 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Login/Logout Settings
-LOGIN_URL = "login"
+LOGIN_URL = "administrators:login" 
 LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "login"
-
+LOGOUT_REDIRECT_URL = "administrators:login"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

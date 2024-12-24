@@ -1,8 +1,7 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include, path
 
 from a_home.views import home_view
-from administrators.views import login_view, logout_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -10,5 +9,4 @@ urlpatterns = [
     path("students/", include("students.urls")),
     path("administrators/", include("administrators.urls")),
     path("payments/", include("payments.urls")),
-
 ]

@@ -35,6 +35,10 @@ class Payment(models.Model):
             self.reference = f"PAY-{secrets.token_hex(5).upper()}"
         super().save(*args, **kwargs)
 
+    def get_student(self):
+        """Get the first associated student or None"""
+        return self.students.first()
+
     def __str__(self):
         return f"{self.reference} - {self.status}"
 

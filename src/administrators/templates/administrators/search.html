@@ -3,99 +3,125 @@
 {% block title %}Search Students{% endblock %}
 
 {% block content %}
-<div class="space-y-8">
-    <div class="sm:flex sm:items-center sm:justify-between">
-        <h1 class="text-2xl font-bold text-gray-900">Search Students</h1>
-        <a href="{% url 'administrators:admin_dashboard' %}" class="mt-4 sm:mt-0 inline-flex items-center text-sm text-primary-600 hover:text-primary-700">
-            <svg class="mr-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-            </svg>
-            Back to Dashboard
-        </a>
-    </div>
-
-    <!-- Search Form -->
-    <form method="get" class="flex gap-4">
-        <div class="flex-1">
-            <input type="text" 
-                   name="q" 
-                   value="{{ query }}"
-                   placeholder="Search by name, reference number, or email"
-                   class="input-field"
-                   autofocus>
-        </div>
-        <button type="submit" class="btn-primary whitespace-nowrap">
-            Search
-        </button>
-    </form>
-
-    <!-- Results -->
-    {% if query %}
-        {% if students %}
-            <div class="mt-4 -mx-4 sm:-mx-6 overflow-x-auto">
-                <div class="inline-block min-w-full align-middle">
-                    <table class="min-w-full divide-y divide-gray-300">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Reference Number
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Name
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Department
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Payment Status
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            {% for student in students %}
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {{ student.ref_number }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ student.full_name }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ student.department.name }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    {% if student.payment %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            {% if student.payment.status == 'Successful' %}
-                                                bg-green-100 text-green-800
-                                            {% elif student.payment.status == 'Failed' %}
-                                                bg-red-100 text-red-800
-                                            {% else %}
-                                                bg-yellow-100 text-yellow-800
-                                            {% endif %}">
-                                            {{ student.payment.status }}
-                                        </span>
-                                    {% else %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            No Payment
-                                        </span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+<div class="divide-y divide-gray-200">
+    <!-- Header Section -->
+    <div class="card-section bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8">
+        <div class="flex items-center justify-between">
+            <div class="space-y-4">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                        Search Students
+                    </span>
+                </h1>
+                <div class="flex flex-wrap gap-2">
+                    <a href="{% url 'administrators:admin_dashboard' %}" 
+                       class="glass-button inline-flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Back to Dashboard
+                    </a>
                 </div>
             </div>
-        {% else %}
-            <div class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <h3 class="mt-2 text-sm font-semibold text-gray-900">No results found</h3>
-                <p class="mt-1 text-sm text-gray-500">No students found matching "{{ query }}"</p>
+            <div class="hidden sm:block">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="card-content p-8 space-y-8">
+        <!-- Search Form -->
+        <div class="glass-card p-8">
+            <form method="get" class="flex gap-4">
+                <input type="text" 
+                       name="q" 
+                       value="{{ query }}"
+                       placeholder="Search by name, reference number, or email"
+                       class="flex-1 px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                       autofocus>
+                <button type="submit" 
+                        class="px-8 py-4 rounded-xl font-bold text-white shadow-xl whitespace-nowrap
+                               bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600
+                               hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700
+                               transform hover:-translate-y-0.5 transition-all duration-200">
+                    Search
+                </button>
+            </form>
+        </div>
+
+        <!-- Results -->
+        {% if query %}
+            {% if students %}
+                <div class="glass-card overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Reference Number
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Name
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Department
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Payment Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                {% for student in students %}
+                                <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{% url 'administrators:student_detail' student.ref_number %}'">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        {{ student.ref_number }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ student.full_name }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ student.department.name }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        {% if student.payment %}
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                {% if student.payment.status == 'Successful' %}
+                                                    bg-green-100 text-green-800
+                                                {% elif student.payment.status == 'Failed' %}
+                                                    bg-red-100 text-red-800
+                                                {% else %}
+                                                    bg-yellow-100 text-yellow-800
+                                                {% endif %}">
+                                                {{ student.payment.status }}
+                                            </span>
+                                        {% else %}
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                No Payment
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% else %}
+                <div class="glass-card p-12 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 class="mt-2 text-sm font-semibold text-gray-900">No results found</h3>
+                    <p class="mt-1 text-sm text-gray-500">No students found matching "{{ query }}"</p>
+                </div>
+            {% endif %}
         {% endif %}
-    {% endif %}
+    </div>
 </div>
 {% endblock %}

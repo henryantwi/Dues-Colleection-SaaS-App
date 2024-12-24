@@ -1,0 +1,176 @@
+{% extends 'layouts/box.html' %}
+
+{% block title %}Student Details - {{ student.full_name }}{% endblock %}
+
+{% block content %}
+<div class="divide-y divide-gray-200">
+    <!-- Header Section -->
+    <div class="card-section bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8">
+        <div class="flex items-center justify-between">
+            <div class="space-y-4">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                        {{ student.full_name }}
+                    </span>
+                </h1>
+                <p class="text-gray-600">{{ student.department.name }} Student</p>
+                <div class="flex flex-wrap gap-2">
+                    <a href="{% url 'administrators:search' %}" class="glass-button inline-flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Back to Search
+                    </a>
+                </div>
+            </div>
+            <!-- Payment Status Badge -->
+            <div class="hidden sm:block">
+                {% if latest_payment %}
+                    <div class="glass-card p-4 text-center">
+                        <span class="px-4 py-2 rounded-full text-sm font-semibold
+                            {% if latest_payment.status == 'Successful' %}bg-green-100 text-green-800
+                            {% elif latest_payment.status == 'Failed' %}bg-red-100 text-red-800
+                            {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {{ latest_payment.status }}
+                        </span>
+                    </div>
+                {% else %}
+                    <div class="glass-card p-4 text-center">
+                        <span class="px-4 py-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-800">
+                            No Payment
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="card-content p-8 space-y-8">
+        <!-- Student Information -->
+        <div class="glass-card p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+                    <dl class="space-y-4">
+                        <div class="glass-item p-4 rounded-lg">
+                            <dt class="text-sm font-medium text-gray-500">Reference Number</dt>
+                            <dd class="mt-1 text-lg font-medium text-gray-900">{{ student.ref_number }}</dd>
+                        </div>
+                        <div class="glass-item p-4 rounded-lg">
+                            <dt class="text-sm font-medium text-gray-500">Email Address</dt>
+                            <dd class="mt-1 text-lg font-medium text-gray-900">{{ student.email }}</dd>
+                        </div>
+                        <div class="glass-item p-4 rounded-lg">
+                            <dt class="text-sm font-medium text-gray-500">Mobile Number</dt>
+                            <dd class="mt-1 text-lg font-medium text-gray-900">{{ student.mobile }}</dd>
+                        </div>
+                    </dl>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Academic Information</h3>
+                    <dl class="space-y-4">
+                        <div class="glass-item p-4 rounded-lg">
+                            <dt class="text-sm font-medium text-gray-500">Department</dt>
+                            <dd class="mt-1 text-lg font-medium text-gray-900">{{ student.department.name }}</dd>
+                        </div>
+                        <div class="glass-item p-4 rounded-lg">
+                            <dt class="text-sm font-medium text-gray-500">Academic Year</dt>
+                            <dd class="mt-1 text-lg font-medium text-gray-900">
+                                {% if student.year_group == 1 %}
+                                    Year One
+                                {% else %}
+                                    Continuing Student
+                                {% endif %}
+                            </dd>
+                        </div>
+                        <div class="glass-item p-4 rounded-lg">
+                            <dt class="text-sm font-medium text-gray-500">Registration Date</dt>
+                            <dd class="mt-1 text-lg font-medium text-gray-900">{{ student.created_at|date:"M d, Y" }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment History -->
+        <div class="glass-card p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Payment History</h3>
+            {% if payments %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for payment in payments %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {{ payment.reference }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    GH₵{{ payment.amount|floatformat:2 }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ payment.method }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {% if payment.status == 'Successful' %}bg-green-100 text-green-800
+                                        {% elif payment.status == 'Failed' %}bg-red-100 text-red-800
+                                        {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                        {{ payment.status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ payment.created_at|date:"M d, Y H:i" }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {% if payment.status == 'Pending' %}
+                                        {% if user.is_superuser or user.departmentadmin.department == payment.department %}
+                                            <form method="post" action="{% url 'administrators:mark_payment_successful' payment.reference %}" 
+                                                class="inline-block">
+                                                {% csrf_token %}
+                                                <button type="submit" 
+                                                        class="glass-button text-xs px-3 py-1 hover:bg-blue-50"
+                                                        onclick="return confirm('Are you sure you want to mark this payment as successful?')">
+                                                    Mark as Successful
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-8">
+                    <p class="text-gray-500">No payment history found</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .glass-item {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(209, 213, 219, 0.3);
+        backdrop-filter: blur(8px);
+        transition: all 0.3s ease;
+    }
+    .glass-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+</style>
+{% endblock %}

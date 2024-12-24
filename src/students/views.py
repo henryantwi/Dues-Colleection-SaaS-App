@@ -1,19 +1,13 @@
 import json
-import uuid
 
 import requests
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
-from django.db.models import Count, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from icecream import ic
 
-from payments.forms import PaymentForm
 from payments.models import Payment
 
-from .forms import StudentRegistrationForm
 from .models import Department, PendingMomoPayment, Student
 
 
@@ -188,7 +182,8 @@ def registration_preview(request):
                                 email=preview_data["email"],
                                 mobile=preview_data["mobile"],
                                 department=department,
-                                payment=payment
+                                payment=payment,
+                                year_group=1 if preview_data["is_year_one"] else 2
                             )
                             request.session.pop("registration_preview", None)
                             return redirect(response_data["data"]["authorization_url"])
@@ -210,6 +205,7 @@ def registration_preview(request):
                             mobile=preview_data["mobile"],
                             department=department,
                             payment=payment,
+                            year_group=1 if preview_data["is_year_one"] else 2
                         )
                         # Update payment status for cash
                         payment.status = "Pending"

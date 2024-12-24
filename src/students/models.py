@@ -36,12 +36,13 @@ class Student(models.Model):
         Department, on_delete=models.CASCADE, related_name="students"
     )
     payment = models.ForeignKey(
-        "payments.Payment",
-        on_delete=models.SET_NULL,
-        null=True,
+        "payments.Payment", 
+        on_delete=models.SET_NULL, 
+        null=True, 
         blank=True,
-        related_name="students",
+        related_name='students'
     )
+    year_group = models.IntegerField()
     unique_code = models.CharField(max_length=10, unique=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -56,6 +57,7 @@ class Student(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        
 
 
 class PendingMomoPayment(models.Model):
@@ -65,6 +67,7 @@ class PendingMomoPayment(models.Model):
     mobile = models.CharField(max_length=15)
     department = models.ForeignKey("Department", on_delete=models.CASCADE)
     payment = models.OneToOneField("payments.Payment", on_delete=models.CASCADE)
+    year_group = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
