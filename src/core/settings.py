@@ -1,14 +1,25 @@
-import os
 from pathlib import Path
+
+from decouple import config
+
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = "django-insecure-17=jwc_h%+8p37qvrg^$-h8dkg8tg2s!n=*t_qp(j%e&at)_(e"
+SECRET_KEY = config("DJANGO_SECRET_KEY")
 
-DEBUG = True
+ENVIRONMENT = config("ENVIRONMENT", default="production")
 
-ALLOWED_HOSTS = []
+POSTGRES_LOCALLY = config("POSTGRES_LOCALLY", default=False, cast=bool)
+
+DEBUG = config("DEBUG", default=False, cast=bool)
+
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = ["*"]
+
 
 INSTALLED_APPS = [
     # 'jazzmin',
@@ -27,6 +38,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -41,7 +53,9 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -62,6 +76,9 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+if ENVIRONMENT == "production" or POSTGRES_LOCALLY is True:
+    DATABASES["default"] = dj_database_url.parse(config("DATABASE_URL"))
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -91,9 +108,23 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Serve static files during development with cloudinary
+if ENVIRONMENT == "production":
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+else:
+    STATICFILES_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
+# Cloudinary configuration
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+}
 
 # Login/Logout Settings
-LOGIN_URL = "administrators:login" 
+LOGIN_URL = "administrators:login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "administrators:login"
 
@@ -120,13 +151,13 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 #     "site_brand": "DuesFlow",
 #     "site_logo": "/images/logo.svg",
 #     "welcome_sign": "Welcome to DuesFlow Admin",
-#     "search_model": "students.Student", 
+#     "search_model": "students.Student",
 #     "copyright": "Nesttop Technologies Ltd",
 #     "topmenu_links": [
 #         {"name": "Home", "url": "a_home:home", "permissions": ["auth.view_user"]},
 #         {"name": "Students", "url": "admin:students_student_changelist", "permissions": ["students.view_student"]},
 #         {"name": "Payments", "url": "admin:payments_payment_changelist", "permissions": ["payments.view_payment"]},
 #     ]
- 
+
 # }
 # JAZZMIN_SETTINGS["show_ui_builder"] = True
