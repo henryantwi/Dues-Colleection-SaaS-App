@@ -1,4 +1,5 @@
 import uuid
+from django.core.validators import RegexValidator
 
 from django.db import models
 from django.utils.text import slugify
@@ -31,7 +32,15 @@ class Student(models.Model):
     full_name = models.CharField(max_length=200)
     ref_number = models.CharField(max_length=50, unique=True)
     email = models.EmailField()
-    mobile = models.CharField(max_length=15)
+    mobile = models.CharField(
+        max_length=15,
+        validators=[
+            RegexValidator(
+                regex=r'^\d{10,15}$',
+                message='Phone number must be between 10 and 15 digits.',
+            )
+        ]
+    )
     department = models.ForeignKey(
         Department, on_delete=models.CASCADE, related_name="students"
     )
@@ -64,7 +73,15 @@ class PendingMomoPayment(models.Model):
     ref_number = models.CharField(max_length=20, unique=True)
     full_name = models.CharField(max_length=255)
     email = models.EmailField()
-    mobile = models.CharField(max_length=15)
+    mobile = models.CharField(
+        max_length=15,
+        validators=[
+            RegexValidator(
+                regex=r'^\d{10,15}$',
+                message='Phone number must be between 10 and 15 digits.',
+            )
+        ]
+    )
     department = models.ForeignKey("Department", on_delete=models.CASCADE)
     payment = models.OneToOneField("payments.Payment", on_delete=models.CASCADE)
     year_group = models.IntegerField(default=1)

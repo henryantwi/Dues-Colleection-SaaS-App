@@ -13,7 +13,8 @@ ENVIRONMENT = config("ENVIRONMENT", default="production")
 
 POSTGRES_LOCALLY = config("POSTGRES_LOCALLY", default=False, cast=bool)
 
-DEBUG = config("DEBUG", default=False, cast=bool)
+# DEBUG = config("DEBUG", default=False, cast=bool)
+DEBUG = True    
 
 if DEBUG:
     ALLOWED_HOSTS = ["*"]

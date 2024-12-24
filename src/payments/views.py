@@ -1,4 +1,5 @@
 import json
+import re
 
 import requests
 from django.conf import settings
@@ -15,6 +16,7 @@ from students.models import PendingMomoPayment, Student
 from .forms import PaymentForm
 from .models import Payment
 
+ic.disable()
 
 def create_payment(request, student_id):
     student = get_object_or_404(Student, id=student_id)
@@ -103,11 +105,12 @@ def verify_payment(request, reference):
 
     # Verify with Paystack API
     try:
+        ic(payment.department.paystack_secret_key)
         headers = {"Authorization": f"Bearer {payment.department.paystack_secret_key}"}
         response = requests.get(
             f"https://api.paystack.co/transaction/verify/{reference}", headers=headers
         )
-
+        ic(response.status_code)
         if response.status_code == 200:
             response_data = response.json()
 
@@ -122,13 +125,15 @@ def verify_payment(request, reference):
                     email=pending_reg.email,
                     mobile=pending_reg.mobile,
                     department=pending_reg.department,
-                    payment=payment
+                    payment=payment,
+                    year_group=pending_reg.year_group  # Add this line to include year_group
                 )
                 # Delete pending registration
                 pending_reg.delete()
                 return redirect('students:registration_confirmation', student_id=student.id)
 
     except Exception as e:
+        ic(e)
         payment.status = "Failed"
         payment.save()
         messages.error(request, f"Error verifying payment: {str(e)}")
@@ -193,6 +198,24 @@ def create_admin_payment(request):
         # Validate student info
         if not all([ref_number, full_name, email, mobile, payment_method, amount_type]):
             messages.error(request, "All fields are required.")
+            return render(
+                request,
+                "payments/create_admin_payment.html",
+                {
+                    "department": department,
+                    "ref_number": ref_number,
+                    "full_name": full_name,
+                    "email": email,
+                    "mobile": mobile,
+                    "payment_method": payment_method,
+                    "amount_type": amount_type,
+                    "custom_amount": custom_amount,
+                },
+            )
+
+        # Validate mobile number
+        if not re.match(r'^\d{10,15}$', mobile):
+            messages.error(request, "Mobile number must be between 10 and 15 digits.")
             return render(
                 request,
                 "payments/create_admin_payment.html",

@@ -10,6 +10,7 @@ from payments.models import Payment
 
 from .models import Department, PendingMomoPayment, Student
 
+ic.disable()
 
 def student_registration(request, department_id, is_year_one=False):
     department = get_object_or_404(Department, id=department_id)
@@ -125,6 +126,7 @@ def registration_preview(request):
     preview_data = request.session.get("registration_preview")
 
     if not preview_data:
+        ic(e)
         messages.error(request, "No registration data found. Please start over.")
         return redirect(
             "students:registration", department_id=1
@@ -188,6 +190,7 @@ def registration_preview(request):
                             request.session.pop("registration_preview", None)
                             return redirect(response_data["data"]["authorization_url"])
                     except Exception as e:
+                        ic(e)
                         payment.status = "Failed"
                         payment.save()
                         messages.error(request, f"Payment processing error: {str(e)}")
@@ -218,6 +221,7 @@ def registration_preview(request):
                         return redirect("students:registration_confirmation", student_id=student.id)
                         
                     except Exception as e:
+                        ic(e)
                         payment.status = "Failed"
                         payment.save()
                         messages.error(request, f"Registration error: {str(e)}")
@@ -226,6 +230,7 @@ def registration_preview(request):
                         )
               
             except Exception as e:
+                ic(e)
                 messages.error(request, f"Error processing payment: {str(e)}")
                 # Return to preview page with data intact
                 return render(

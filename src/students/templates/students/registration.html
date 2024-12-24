@@ -87,9 +87,19 @@
 
                     <div class="form-group">
                         <label for="mobile" class="form-label">Mobile Number</label>
-                        <input type="tel" name="mobile" id="mobile" 
-                               value="{{ mobile }}" required class="form-input"
-                               placeholder="Enter your mobile number">
+                        <input type="tel" 
+                               name="mobile" 
+                               id="mobile" 
+                               value="{{ mobile }}" 
+                               required 
+                               class="form-input"
+                               pattern="[0-9]{10,15}"
+                               minlength="10"
+                               maxlength="15"
+                               title="Phone number must be between 10 and 15 digits"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                               placeholder="Enter your mobile number (digits only)">
+                        <small class="text-gray-500">Enter between 10 and 15 digits only</small>
                     </div>
                 </div>
             </div>
@@ -170,6 +180,7 @@
 {% endblock %}
 
 {% block extra_js %}
+{{ block.super }}
 <script>
     document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
         radio.addEventListener('change', function() {
@@ -188,5 +199,17 @@
 
     // Initialize the checked state on page load
     document.querySelector('input[name="payment_method"]:checked')?.dispatchEvent(new Event('change'));
+
+    // Add mobile number validation
+    document.getElementById('mobile').addEventListener('input', function(e) {
+        let value = e.target.value;
+        // Remove any non-digit characters
+        value = value.replace(/\D/g, '');
+        // Truncate to max length
+        if (value.length > 15) {
+            value = value.slice(0, 15);
+        }
+        e.target.value = value;
+    });
 </script>
 {% endblock %}
