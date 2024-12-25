@@ -120,7 +120,10 @@
         </div>
 
         <!-- Hidden Forms -->
-        <form id="edit-form" method="post" class="hidden">{% csrf_token %}</form>
+        <form id="edit-form" method="post" class="hidden">
+            {% csrf_token %}
+            <input type="hidden" name="return_url" value="{{ preview_data.return_url }}">
+        </form>
         <form id="confirm-form" method="post" class="hidden">{% csrf_token %}</form>
     </div>
 </div>

@@ -12,10 +12,21 @@ from .models import Department, PendingMomoPayment, Student
 
 ic.disable()
 
+
+def _clear_registration_session(request):
+    """Helper function to clear all registration-related session data"""
+    keys_to_clear = ["registration_preview", "registration_return_url"]
+    for key in keys_to_clear:
+        request.session.pop(key, None)
+
+
 def student_registration(request, department_id, is_year_one=False):
     department = get_object_or_404(Department, id=department_id)
 
-    # Check if there's preview data for edit action
+    # Store the current path for return redirect
+    request.session["registration_return_url"] = request.path
+
+    # Get preview data from session
     preview_data = request.session.get("registration_preview", {})
 
     if request.method == "POST":
@@ -83,30 +94,16 @@ def student_registration(request, department_id, is_year_one=False):
         # Redirect to preview page
         return redirect("students:registration_preview")
 
-    # GET request
-    if "edit" in request.GET:
-        # Don't clear preview data if editing
-        return render(
-            request,
-            "students/registration.html",
-            {
-                "department": department,
-                "is_year_one": is_year_one,
-                "amount": (
-                    department.year_one_amount
-                    if is_year_one
-                    else department.other_years_amount
-                ),
-                "ref_number": preview_data.get("ref_number", ""),
-                "full_name": preview_data.get("full_name", ""),
-                "email": preview_data.get("email", ""),
-                "mobile": preview_data.get("mobile", ""),
-                "payment_method": preview_data.get("payment_method", ""),
-            },
-        )
+    # Check if we're coming back to edit
+    initial_data = {}
+    if preview_data:
+        initial_data = {
+            "full_name": preview_data.get("full_name", ""),
+            "email": preview_data.get("email", ""),
+            "mobile": preview_data.get("mobile", ""),
+            "payment_method": preview_data.get("payment_method", ""),
+        }
 
-    # Clear preview data for fresh registration
-    request.session.pop("registration_preview", None)
     return render(
         request,
         "students/registration.html",
@@ -118,6 +115,7 @@ def student_registration(request, department_id, is_year_one=False):
                 if is_year_one
                 else department.other_years_amount
             ),
+            **initial_data,  # This will populate the form fields with previous data
         },
     )
 
@@ -126,18 +124,18 @@ def registration_preview(request):
     preview_data = request.session.get("registration_preview")
 
     if not preview_data:
-        ic(e)
         messages.error(request, "No registration data found. Please start over.")
-        return redirect(
-            "students:registration", department_id=1
-        )  # Replace with default department ID
+        return redirect("students:registration", department_id=1)
 
     if request.method == "POST":
         if "edit" in request.POST:
-            # Keep preview data and redirect back to registration with edit flag
-            return redirect(
-                f"{reverse('students:registration', kwargs={'department_id': preview_data['department_id']})}?edit=true"
-            )
+            # Keep the preview data in session when going back to edit
+            return_url = request.POST.get("return_url", "")
+            if not return_url:
+                return redirect(
+                    "students:registration", department_id=preview_data["department_id"]
+                )
+            return redirect(return_url)
 
         elif "confirm" in request.POST:
             try:
@@ -149,7 +147,7 @@ def registration_preview(request):
                 payment = Payment.objects.create(
                     department=department,
                     method=preview_data["payment_method"],
-                    amount=preview_data["amount"]
+                    amount=preview_data["amount"],
                 )
 
                 # Handle payment method before creating student
@@ -185,9 +183,11 @@ def registration_preview(request):
                                 mobile=preview_data["mobile"],
                                 department=department,
                                 payment=payment,
-                                year_group=1 if preview_data["is_year_one"] else 2
+                                year_group=1 if preview_data["is_year_one"] else 2,
                             )
+                            # Clear all registration session data after successful processing
                             request.session.pop("registration_preview", None)
+                            request.session.pop("registration_return_url", None)
                             return redirect(response_data["data"]["authorization_url"])
                     except Exception as e:
                         ic(e)
@@ -196,7 +196,9 @@ def registration_preview(request):
                         messages.error(request, f"Payment processing error: {str(e)}")
                         # Return to preview page with data intact
                         return render(
-                            request, "students/preview.html", {"preview_data": preview_data}
+                            request,
+                            "students/preview.html",
+                            {"preview_data": preview_data},
                         )
                 elif preview_data["payment_method"] == "Cash":
                     try:
@@ -208,35 +210,46 @@ def registration_preview(request):
                             mobile=preview_data["mobile"],
                             department=department,
                             payment=payment,
-                            year_group=1 if preview_data["is_year_one"] else 2
+                            year_group=1 if preview_data["is_year_one"] else 2,
                         )
                         # Update payment status for cash
                         payment.status = "Pending"
                         payment.save()
-                        
-                        # Clear preview data
+
+                        # Clear all registration session data after successful processing
                         request.session.pop("registration_preview", None)
-                        
-                        messages.success(request, "Registration successful. Please make cash payment at the department office.")
-                        return redirect("students:registration_confirmation", student_id=student.id)
-                        
+                        request.session.pop("registration_return_url", None)
+
+                        messages.success(
+                            request,
+                            "Registration successful. Please make cash payment at the department office.",
+                        )
+                        return redirect(
+                            "students:registration_confirmation", student_id=student.id
+                        )
+
                     except Exception as e:
                         ic(e)
                         payment.status = "Failed"
                         payment.save()
                         messages.error(request, f"Registration error: {str(e)}")
                         return render(
-                            request, "students/preview.html", {"preview_data": preview_data}
+                            request,
+                            "students/preview.html",
+                            {"preview_data": preview_data},
                         )
-              
+
             except Exception as e:
                 ic(e)
                 messages.error(request, f"Error processing payment: {str(e)}")
                 # Return to preview page with data intact
                 return render(
                     request, "students/preview.html", {"preview_data": preview_data}
-                )  
-        
+                )
+
+    # Add the current path to the preview data
+    preview_data["return_url"] = request.session.get("registration_return_url")
+
     return render(request, "students/preview.html", {"preview_data": preview_data})
 
 
@@ -245,3 +258,4 @@ def registration_confirmation(request, student_id):
     return render(
         request, "students/registration_confirmation.html", {"student": student}
     )
+    
