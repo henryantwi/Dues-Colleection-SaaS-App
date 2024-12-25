@@ -13,13 +13,13 @@ ENVIRONMENT = config("ENVIRONMENT", default="production")
 
 POSTGRES_LOCALLY = config("POSTGRES_LOCALLY", default=False, cast=bool)
 
-# DEBUG = config("DEBUG", default=False, cast=bool)
-DEBUG = True    
+DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
+print(DEBUG)
 
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ["*"]
+    ALLOWED_HOSTS = ["dues-colleection-saas-app.onrender.com", "localhost:8000", "127.0.0.1:8000"]
 
 
 INSTALLED_APPS = [
@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "students",
     "payments",
     "widget_tweaks",
+    "admin_honeypot",
 ]
 
 MIDDLEWARE = [
