@@ -17,9 +17,9 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#4f46e5',
-                        'primary-hover': '#4338ca',
-                        accent: '#e11d48',
+                        primary: '#3b82f6',
+                        'primary-hover': '#2563eb',
+                        accent: '#4f46e5',
                     },
                     backgroundColor: {
                         'glass': 'rgba(255, 255, 255, 0.9)',
@@ -34,7 +34,7 @@
         [x-cloak] { display: none !important; }
         
         body {
-            @apply bg-gradient-to-br from-slate-50 to-slate-100 text-slate-800 min-h-screen;
+            @apply bg-gradient-to-br from-slate-50 to-blue-50 text-slate-800 min-h-screen;
         }
 
         /* Glass effect components */
@@ -45,7 +45,7 @@
         .glass-button {
             @apply px-6 py-3 rounded-xl backdrop-blur-lg bg-white/80 border border-white/50
                    transition-all duration-300 hover:bg-white/90 font-medium text-slate-700
-                   shadow-sm hover:shadow-md;
+                   shadow-sm hover:shadow-md hover:-translate-y-0.5;
         }
 
         /* Navigation */
@@ -55,7 +55,7 @@
 
         /* Text effects */
         .gradient-text {
-            @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+            @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600;
         }
 
         /* Alerts */

@@ -20,8 +20,8 @@ def _clear_registration_session(request):
         request.session.pop(key, None)
 
 
-def student_registration(request, department_id, is_year_one=False):
-    department = get_object_or_404(Department, id=department_id)
+def student_registration(request, department_slug, is_year_one=False):
+    department = get_object_or_404(Department, slug=department_slug)
 
     # Store the current path for return redirect
     request.session["registration_return_url"] = request.path
@@ -96,8 +96,9 @@ def student_registration(request, department_id, is_year_one=False):
 
     # Check if we're coming back to edit
     initial_data = {}
-    if preview_data:
+    if (preview_data):
         initial_data = {
+            "ref_number": preview_data.get("ref_number", ""),
             "full_name": preview_data.get("full_name", ""),
             "email": preview_data.get("email", ""),
             "mobile": preview_data.get("mobile", ""),
@@ -125,16 +126,17 @@ def registration_preview(request):
 
     if not preview_data:
         messages.error(request, "No registration data found. Please start over.")
-        return redirect("students:registration", department_id=1)
+        # Get first department as fallback
+        department = Department.objects.first()
+        return redirect("students:registration", department_slug=department.slug)
 
     if request.method == "POST":
         if "edit" in request.POST:
             # Keep the preview data in session when going back to edit
             return_url = request.POST.get("return_url", "")
             if not return_url:
-                return redirect(
-                    "students:registration", department_id=preview_data["department_id"]
-                )
+                department = get_object_or_404(Department, id=preview_data["department_id"])
+                return redirect("students:registration", department_slug=department.slug)
             return redirect(return_url)
 
         elif "confirm" in request.POST:
@@ -258,4 +260,3 @@ def registration_confirmation(request, student_id):
     return render(
         request, "students/registration_confirmation.html", {"student": student}
     )
-    

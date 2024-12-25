@@ -4,56 +4,62 @@
 {% block content %}
 <div class="min-h-screen flex items-center justify-center relative overflow-hidden">
     <div class="absolute inset-0">
-        <div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 blur-3xl"></div>
-        <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-accent/20 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 blur-3xl"></div>
+        <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-indigo-500/20 to-transparent rounded-full blur-3xl"></div>
     </div>
     <div class="container mx-auto relative px-4 py-8">
         <div class="text-center max-w-3xl mx-auto">
-            <h1 class="text-4xl font-bold mb-8">Student Association Dues Payment</h1>
+            <h1 class="text-3xl sm:text-4xl font-extrabold mb-6 sm:mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                Student Association Dues Payment
+            </h1>
             {% if user.is_authenticated %}
                 {% if user.is_department_admin %}
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-semibold mb-4">{{ user.department.name }} Department Admin</h2>
-                        <div class="flex gap-4 justify-center">
-                            <a href="{% url 'administrators:admin_dashboard' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg">
-                                <span class="text-white">Go to Dashboard</span>
+                    <div class="mb-6 sm:mb-8">
+                        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-900">{{ user.department.name }} Department Admin</h2>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="{% url 'administrators:admin_dashboard' %}" 
+                               class="w-full sm:w-auto px-6 py-3 rounded-xl font-medium text-white shadow-sm bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 hover:-translate-y-0.5 text-center">
+                                Go to Dashboard
                             </a>
-                            <a href="{% url 'administrators:search' %}" class="bg-white text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm">
+                            <a href="{% url 'administrators:search' %}" 
+                               class="w-full sm:w-auto bg-white text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm text-center">
                                 Search Students
                             </a>
                         </div>
                     </div>
                 {% elif user.is_superuser %}
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-semibold mb-4">System Administrator</h2>
-                        <div class="flex gap-4 justify-center">
-                            <a href="{% url 'admin:index' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg">
-                                <span class="text-white">Admin Panel</span>
+                    <div class="mb-6 sm:mb-8">
+                        <h2 class="text-xl sm:text-2xl font-semibold mb-4">System Administrator</h2>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="{% url 'admin:index' %}" 
+                               class="w-full sm:w-auto px-6 py-3 rounded-xl font-medium text-white shadow-sm bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 hover:-translate-y-0.5 text-center">
+                                Admin Panel
                             </a>
-                            <a href="{% url 'administrators:search' %}" class="bg-white text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm">
+                            <a href="{% url 'administrators:search' %}" 
+                               class="w-full sm:w-auto bg-white text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm text-center">
                                 Search Students
                             </a>
                         </div>
                     </div>
                 {% endif %}
             {% else %}
-                <div class="prose prose-lg mx-auto mb-8">
-                    <p>Welcome to the Student Association Dues Payment System. To make a payment, please use the registration link provided by your department.</p>
-                    <p class="font-medium">Example: /students/register/[department-slug]/[year-one]/</p>
+                <div class="prose prose-lg mx-auto mb-6 sm:mb-8 px-4">
+                    <p class="text-sm sm:text-base">Welcome to the Student Association Dues Payment System. To make a payment, please use the registration link provided by your department.</p>
+                    <p class="font-medium text-sm sm:text-base">Example: /students/register/[department-slug]/[year-one]/</p>
                 </div>
                 
-                <div class="bg-blue-100 rounded-lg p-6 text-left">
-                    <h2 class="text-xl font-semibold mb-4">For Department Administrators</h2>
-                    <p class="mb-4">If you are a department administrator, please sign in to access your dashboard.</p>
-                    <a href="{% url 'administrators:login' %}" class="glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg inline-block">
-                        <span>Sign In</span>
+                <div class="bg-blue-100 rounded-lg p-4 sm:p-6 text-left">
+                    <h2 class="text-lg sm:text-xl font-semibold mb-4">For Department Administrators</h2>
+                    <p class="mb-4 text-sm sm:text-base">If you are a department administrator, please sign in to access your dashboard.</p>
+                    <a href="{% url 'administrators:login' %}" 
+                       class="w-full sm:w-auto glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg inline-flex justify-center items-center">
+                        Sign In
                     </a>
                 </div>
             {% endif %}
         </div>
     </div>
-    
 </div>
 {% endblock content %}
 
