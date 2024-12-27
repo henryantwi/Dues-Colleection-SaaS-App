@@ -14,8 +14,7 @@ ENVIRONMENT = config("ENVIRONMENT", default="production")
 POSTGRES_LOCALLY = config("POSTGRES_LOCALLY", default=False, cast=bool)
 
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
-print(DEBUG)
-
+    
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
@@ -30,6 +29,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "cloudinary_storage",
+    "cloudinary",
     "administrators.apps.AdministratorsConfig",  # or just 'administrators'
     "a_home",
     "students",
@@ -111,6 +112,14 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
+
+if ENVIRONMENT == "development":
+    MEDIA_ROOT = BASE_DIR / "media"
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+else:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 # Serve static files during development with cloudinary
 if ENVIRONMENT == "production":

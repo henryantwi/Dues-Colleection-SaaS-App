@@ -4,6 +4,7 @@ from . import views
 app_name = 'students'
 
 urlpatterns = [
+    path('departments/', views.department_list, name='department_list'),
     # Put preview and confirmation URLs first
     path('registration/preview/', views.registration_preview, name='registration_preview'),
     path('registration/confirmation/<int:student_id>/', views.registration_confirmation,

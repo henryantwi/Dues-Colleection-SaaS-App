@@ -150,6 +150,36 @@
         input[name="remember"] {
             @apply w-auto
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .button, button, [type='submit'], [type='button'] {
+                @apply px-4 py-2;
+            }
+            h1 {
+                @apply text-3xl;
+            }
+            h2 {
+                @apply text-lg;
+            }
+            p {
+                @apply mb-2;
+            }
+        }
+        @media (max-width: 360px) {
+            .button, button, [type='submit'], [type='button'] {
+                @apply px-2 py-1;
+            }
+            h1 {
+                @apply text-2xl;
+            }
+            h2 {
+                @apply text-base;
+            }
+            p {
+                @apply mb-1;
+            }
+        }
     </style>
 </head>
 <body class="{% block class %}{% endblock %}">

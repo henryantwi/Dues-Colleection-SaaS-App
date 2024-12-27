@@ -1,10 +1,18 @@
 import uuid
-from django.core.validators import RegexValidator
 
+from cloudinary_storage.storage import MediaCloudinaryStorage
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.text import slugify
+from django_resized import ResizedImageField
 
-# Create your models here.
+image_storage = (
+    MediaCloudinaryStorage()
+    if settings.ENVIRONMENT == "production"
+    else FileSystemStorage()
+)
 
 
 class Department(models.Model):
@@ -15,6 +23,14 @@ class Department(models.Model):
     paystack_secret_key = models.CharField(max_length=200)
     paystack_public_key = models.CharField(max_length=200)
     google_app_password = models.CharField(max_length=200)
+    image = ResizedImageField(
+        size=[600, 600],
+        quality=85,
+        upload_to="logos/",
+        storage=image_storage,
+        null=True,
+        blank=True,
+    )
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -36,20 +52,20 @@ class Student(models.Model):
         max_length=15,
         validators=[
             RegexValidator(
-                regex=r'^\d{10,15}$',
-                message='Phone number must be between 10 and 15 digits.',
+                regex=r"^\d{10,15}$",
+                message="Phone number must be between 10 and 15 digits.",
             )
-        ]
+        ],
     )
     department = models.ForeignKey(
         Department, on_delete=models.CASCADE, related_name="students"
     )
     payment = models.ForeignKey(
-        "payments.Payment", 
-        on_delete=models.SET_NULL, 
-        null=True, 
+        "payments.Payment",
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
-        related_name='students'
+        related_name="students",
     )
     year_group = models.IntegerField()
     unique_code = models.CharField(max_length=10, unique=True, blank=True)
@@ -66,7 +82,6 @@ class Student(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-        
 
 
 class PendingMomoPayment(models.Model):
@@ -77,10 +92,10 @@ class PendingMomoPayment(models.Model):
         max_length=15,
         validators=[
             RegexValidator(
-                regex=r'^\d{10,15}$',
-                message='Phone number must be between 10 and 15 digits.',
+                regex=r"^\d{10,15}$",
+                message="Phone number must be between 10 and 15 digits.",
             )
-        ]
+        ],
     )
     department = models.ForeignKey("Department", on_delete=models.CASCADE)
     payment = models.OneToOneField("payments.Payment", on_delete=models.CASCADE)

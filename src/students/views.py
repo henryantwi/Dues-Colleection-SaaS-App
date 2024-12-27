@@ -260,3 +260,8 @@ def registration_confirmation(request, student_id):
     return render(
         request, "students/registration_confirmation.html", {"student": student}
     )
+
+
+def department_list(request):
+    departments = Department.objects.all()
+    return render(request, "students/department_list.html", {"departments": departments})
