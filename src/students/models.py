@@ -71,6 +71,7 @@ class Student(models.Model):
     unique_code = models.CharField(max_length=10, unique=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    level = models.IntegerField(default=100)
 
     def save(self, *args, **kwargs):
         if not self.unique_code:
@@ -99,6 +100,15 @@ class PendingMomoPayment(models.Model):
     )
     department = models.ForeignKey("Department", on_delete=models.CASCADE)
     payment = models.OneToOneField("payments.Payment", on_delete=models.CASCADE)
+    year_group = models.IntegerField(default=1)
+    level = models.IntegerField(default=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Pending Momo Payment"
+        verbose_name_plural = "Pending Momo Payments"
+    payment = models.OneToOneField("payments.Payment", on_delete=models.CASCADE)
+
     year_group = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
 

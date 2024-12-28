@@ -1,4 +1,4 @@
-{% extends 'layouts/box.html' %}
+{% extends 'layouts/student_box.html' %}
 
 {% block title %}Review Registration{% endblock %}
 
@@ -79,6 +79,16 @@
                     <div class="space-y-2">
                         <dt class="text-sm font-medium text-gray-500">Payment method</dt>
                         <dd class="text-lg text-gray-900">{{ preview_data.payment_method }}</dd>
+                    </div>
+                    <div class="space-y-2">
+                        <dt class="text-sm font-medium text-gray-500">Level</dt>
+                        <dd class="text-lg text-gray-900">
+                            {% if preview_data.is_year_one %}
+                                Level 100 (First Year)
+                            {% else %}
+                                Level {{ preview_data.level }} (Continuing)
+                            {% endif %}
+                        </dd>
                     </div>
                 </dl>
             </div>

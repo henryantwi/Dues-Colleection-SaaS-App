@@ -18,6 +18,7 @@ from .models import Payment
 
 ic.disable()
 
+
 def create_payment(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     ic(student)
@@ -126,11 +127,13 @@ def verify_payment(request, reference):
                     mobile=pending_reg.mobile,
                     department=pending_reg.department,
                     payment=payment,
-                    year_group=pending_reg.year_group  # Add this line to include year_group
+                    year_group=pending_reg.year_group,  # Add this line to include year_group
                 )
                 # Delete pending registration
                 pending_reg.delete()
-                return redirect('students:registration_confirmation', student_id=student.id)
+                return redirect(
+                    "students:registration_confirmation", student_id=student.id
+                )
 
     except Exception as e:
         ic(e)
@@ -214,7 +217,7 @@ def create_admin_payment(request):
             )
 
         # Validate mobile number
-        if not re.match(r'^\d{10,15}$', mobile):
+        if not re.match(r"^\d{10,15}$", mobile):
             messages.error(request, "Mobile number must be between 10 and 15 digits.")
             return render(
                 request,

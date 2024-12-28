@@ -147,6 +147,12 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
+# Session Settings
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 3600  # 1 hour in seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
 # Add after AUTHENTICATION_BACKENDS
 AUTH_USER_MODEL = "auth.User"
 
