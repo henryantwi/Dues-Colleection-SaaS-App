@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dues Flow</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/htmx.org/dist/htmx.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        'primary-hover': '#2563eb',
+                        accent: '#4f46e5',
+                    },
+                    backgroundColor: {
+                        'glass': 'rgba(255, 255, 255, 0.9)',
+                        'glass-darker': 'rgba(255, 255, 255, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        /* Reset and base styles */
+        [x-cloak] { display: none !important; }
+        
+        body {
+            @apply bg-gradient-to-br from-slate-50 to-blue-50 text-slate-800 min-h-screen;
+        }
+
+        /* Glass effect components */
+        .glass-card {
+            @apply backdrop-blur-xl bg-white/90 border border-white/50 rounded-2xl shadow-lg;
+        }
+        
+        .glass-button {
+            @apply px-6 py-3 rounded-xl backdrop-blur-lg bg-white/80 border border-white/50
+                   transition-all duration-300 hover:bg-white/90 font-medium text-slate-700
+                   shadow-sm hover:shadow-md hover:-translate-y-0.5;
+        }
+
+        /* Navigation */
+        .nav-link {
+            @apply px-4 py-2 rounded-xl text-slate-600;
+        }
+
+        /* Text effects */
+        .gradient-text {
+            @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600;
+        }
+
+        /* Alerts */
+        .alert-info { @apply bg-blue-50 text-blue-700 border-blue-200 }
+        .alert-success { @apply bg-green-50 text-green-700 border-green-200 }
+        .alert-warning { @apply bg-yellow-50 text-yellow-700 border-yellow-200 }
+        .alert-danger { @apply bg-red-50 text-red-700 border-red-200 }
+
+        /* Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        h1 {
+            @apply text-4xl font-bold mb-4
+        }
+        h2 {
+            @apply text-xl font-bold mb-2
+        }
+        p {
+            @apply mb-4
+        }
+        .button, button, [type='submit'], [type='button'] {
+            @apply bg-primary text-white font-bold px-6 py-4 inline-block 
+            rounded-lg shadow-lg transition-all cursor-pointer
+        }
+        .button:hover, button:hover, [type='submit']:hover, [type='button']:hover {
+            @apply bg-indigo-700
+        }
+        .button:active, button:active, [type='submit']:active, [type='button']:active {
+            @apply scale-95
+        }
+        .button.alert, button.alert {
+            @apply bg-red-700
+        }
+        .button.alert:hover, button.alert:hover {
+            @apply bg-red-600
+        }
+        .button-red {
+            @apply !bg-red-500 hover:!bg-red-600
+        }
+        .button-gray {
+            @apply !bg-gray-300 hover:!bg-[#c3c9d0]
+        }
+        .navitems>li>a {
+            @apply flex items-center gap-2 h-12 px-4 rounded-lg transition-none;
+        }
+        .hoverlist>* {
+            @apply hover:bg-gray-100 rounded-md transition duration-150;
+        }
+        .hoverlist>*>a {
+            @apply flex items-center p-2;
+        }
+        .highlight {
+            @apply !bg-indigo-100;
+        }
+        .allauth content a {
+            @apply underline underline-offset-2
+        }
+        .allauth content a:hover {
+            @apply text-indigo-500
+        }
+        .allauth form[action="/accounts/signup/"] ul {
+            @apply hidden
+        }
+        .allauth form[action="/accounts/signup/"] ul.errorlist {
+            @apply block
+        }
+        .allauth .helptext {
+            @apply block mt-4
+        }
+        label {
+            @apply hidden
+        }
+        input[type=file] {
+            @apply bg-white pl-0
+        }
+        .textarea, textarea, input {
+            @apply w-full rounded-lg py-4 px-5 bg-white border border-slate-200;
+        }
+        .errorlist li {
+            @apply p-1 pl-4 border-l-red-500 border-l-4 border-solid mb-2 text-red-500
+        }
+        label[for="id_remember"] {
+            @apply inline-block w-auto mr-2
+        }
+        input[name="remember"] {
+            @apply w-auto
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .button, button, [type='submit'], [type='button'] {
+                @apply px-4 py-2;
+            }
+            h1 {
+                @apply text-3xl;
+            }
+            h2 {
+                @apply text-lg;
+            }
+            p {
+                @apply mb-2;
+            }
+        }
+        @media (max-width: 360px) {
+            .button, button, [type='submit'], [type='button'] {
+                @apply px-2 py-1;
+            }
+            h1 {
+                @apply text-2xl;
+            }
+            h2 {
+                @apply text-base;
+            }
+            p {
+                @apply mb-1;
+            }
+        }
+    </style>
+</head>
+<body class="{% block class %}{% endblock %}">
+	
+    {% include 'includes/messages.html' %}
+
+    {% include 'includes/student_header.html' %}
+
+    {% block layout %}{% endblock layout %}
+
+    {% include 'includes/footer.html' %}
+
+</body>
+</html>

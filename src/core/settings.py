@@ -22,7 +22,7 @@ else:
 
 
 INSTALLED_APPS = [
-    # 'jazzmin',
+    'jazzmin',  # uncomment this line
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -147,6 +147,12 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
+# Session Settings
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 3600  # 1 hour in seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
 # Add after AUTHENTICATION_BACKENDS
 AUTH_USER_MODEL = "auth.User"
 
@@ -156,19 +162,104 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 
-# JAZZMIN_SETTINGS = {
-#     "site_title": "DuesFlow",
-#     "site_header": "DuesFlow Admin",
-#     "site_brand": "DuesFlow",
-#     "site_logo": "/images/logo.svg",
-#     "welcome_sign": "Welcome to DuesFlow Admin",
-#     "search_model": "students.Student",
-#     "copyright": "Nesttop Technologies Ltd",
-#     "topmenu_links": [
-#         {"name": "Home", "url": "a_home:home", "permissions": ["auth.view_user"]},
-#         {"name": "Students", "url": "admin:students_student_changelist", "permissions": ["students.view_student"]},
-#         {"name": "Payments", "url": "admin:payments_payment_changelist", "permissions": ["payments.view_payment"]},
-#     ]
+JAZZMIN_SETTINGS = {
+    # General settings
+    "site_title": "DuesFlow Admin",
+    "site_header": "DuesFlow",
+    "site_brand": "DuesFlow",
+    "site_logo": "images/logo.svg",
+    "welcome_sign": "Welcome to DuesFlow Administration",
+    "copyright": "Nesttop Technologies Ltd",
+    
+    # Top Menu items
+    "topmenu_links": [
+        {"name": "Home", "url": "home", "permissions": ["auth.view_user"]},
+        {"name": "Departments", "url": "students:department_list", "permissions": ["auth.view_user"]},
+        {"model": "students.Student"},
+        {"model": "payments.Payment"},
+    ],
 
-# }
-# JAZZMIN_SETTINGS["show_ui_builder"] = True
+    # UI Customizer
+    "show_ui_builder": True,
+    
+    # Theme settings
+    "dark_mode_theme": False,
+    "brand_colour": "blue",
+    "accent": "accent",
+    "brand_icon": "fas fa-graduation-cap",
+    
+    # Custom CSS/JS
+    "custom_css": None,
+    "custom_js": None,
+    
+    # Icons
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "students.Student": "fas fa-user-graduate",
+        "students.Department": "fas fa-building",
+        "payments.Payment": "fas fa-money-bill-wave",
+        "administrators.CustomUser": "fas fa-user-shield",
+        "administrators.DepartmentAdmin": "fas fa-user-tie",
+        "students.PendingMomoPayment": "fas fa-money-check-alt",
+    },
+    # Cards
+    "show_ui_builder": True,
+    
+    # Related Modal
+    "related_modal_active": True,
+    
+    # Custom Links
+    "custom_links": {
+        "students": [{
+            "name": "View Departments", 
+            "url": "students:department_list", 
+            "icon": "fas fa-building"
+        }]
+    },
+    
+    # Order with respect to model icons
+    "order_with_respect_to": ["auth", "students", "payments"],
+
+    # Theme colors
+    "theme": {
+        "primary": "blue",
+        "secondary": "indigo",
+        "accent": "purple",
+        "navbar": "bg-gradient-to-r from-blue-600 to-indigo-600",
+        "darkness": False,
+    },
+}
+
+# Additional Jazzmin UI settings
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-primary navbar-dark",
+    "no_navbar_border": True,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "default",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}

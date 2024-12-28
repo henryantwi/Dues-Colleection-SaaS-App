@@ -1,4 +1,4 @@
-{% extends 'layouts/box.html' %}
+{% extends 'layouts/student_box.html' %}
 
 {% block title %}Student Registration{% endblock %}
 
@@ -84,6 +84,7 @@
                                value="{{ email }}" required class="form-input"
                                placeholder="Enter your email address">
                     </div>
+                    
 
                     <div class="form-group">
                         <label for="mobile" class="form-label">Mobile Number</label>
@@ -101,6 +102,77 @@
                                placeholder="Enter your mobile number (digits only)">
                         <small class="text-gray-500">Enter between 10 and 15 digits only</small>
                     </div>
+                    {% if not is_year_one %}
+                    <!-- Level Selection -->
+                    <div class="form-group">
+                        <label class="form-label">Level</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <label class="relative block cursor-pointer">
+                                <input type="radio" 
+                                       name="level" 
+                                       value="200"
+                                       class="peer sr-only" 
+                                       required
+                                       {% if level == '200' %}checked{% endif %}>
+                                <div class="rounded-lg border-2 border-gray-200 p-4 hover:border-blue-400 
+                                           peer-checked:border-blue-500 peer-checked:bg-blue-50 
+                                           transition-all duration-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div class="text-sm">
+                                                <p class="font-medium text-gray-900">Level 200</p>
+                                            </div>
+                                        </div>
+                                        <div class="w-5 h-5 border-2 rounded-full flex-shrink-0 border-gray-300 
+                                                  peer-checked:border-blue-500 peer-checked:bg-blue-500"></div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="relative block cursor-pointer">
+                                <input type="radio" 
+                                       name="level" 
+                                       value="300"
+                                       class="peer sr-only" 
+                                       {% if level == '300' %}checked{% endif %}>
+                                <div class="rounded-lg border-2 border-gray-200 p-4 hover:border-blue-400 
+                                           peer-checked:border-blue-500 peer-checked:bg-blue-50 
+                                           transition-all duration-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div class="text-sm">
+                                                <p class="font-medium text-gray-900">Level 300</p>
+                                            </div>
+                                        </div>
+                                        <div class="w-5 h-5 border-2 rounded-full flex-shrink-0 border-gray-300 
+                                                  peer-checked:border-blue-500 peer-checked:bg-blue-500"></div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="relative block cursor-pointer">
+                                <input type="radio" 
+                                       name="level" 
+                                       value="400"
+                                       class="peer sr-only" 
+                                       {% if level == '400' %}checked{% endif %}>
+                                <div class="rounded-lg border-2 border-gray-200 p-4 hover:border-blue-400 
+                                           peer-checked:border-blue-500 peer-checked:bg-blue-50 
+                                           transition-all duration-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div class="text-sm">
+                                                <p class="font-medium text-gray-900">Level 400</p>
+                                            </div>
+                                        </div>
+                                        <div class="w-5 h-5 border-2 rounded-full flex-shrink-0 border-gray-300 
+                                                  peer-checked:border-blue-500 peer-checked:bg-blue-500"></div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 

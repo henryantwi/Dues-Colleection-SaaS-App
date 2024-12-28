@@ -37,6 +37,7 @@ def student_registration(request, department_slug, is_year_one=False):
             "email": request.POST.get("email"),
             "mobile": request.POST.get("mobile"),
             "payment_method": request.POST.get("payment_method"),
+            "level": request.POST.get("level") if not is_year_one else "100",
         }
 
         # Check if all fields are filled
@@ -103,6 +104,7 @@ def student_registration(request, department_slug, is_year_one=False):
             "email": preview_data.get("email", ""),
             "mobile": preview_data.get("mobile", ""),
             "payment_method": preview_data.get("payment_method", ""),
+            "level": preview_data.get("level", ""),  # Add this line
         }
 
     return render(
@@ -186,6 +188,7 @@ def registration_preview(request):
                                 department=department,
                                 payment=payment,
                                 year_group=1 if preview_data["is_year_one"] else 2,
+                                level=int(preview_data["level"]),
                             )
                             # Clear all registration session data after successful processing
                             request.session.pop("registration_preview", None)
@@ -213,6 +216,7 @@ def registration_preview(request):
                             department=department,
                             payment=payment,
                             year_group=1 if preview_data["is_year_one"] else 2,
+                            level=int(preview_data["level"]) if not preview_data["is_year_one"] else 100,
                         )
                         # Update payment status for cash
                         payment.status = "Pending"
@@ -265,3 +269,7 @@ def registration_confirmation(request, student_id):
 def department_list(request):
     departments = Department.objects.all()
     return render(request, "students/department_list.html", {"departments": departments})
+    return render(request, "students/department_list.html", {"departments": departments})
+
+
+
