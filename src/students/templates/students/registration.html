@@ -43,15 +43,28 @@
         <!-- Amount Card -->
         <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-8 sm:p-6 text-white shadow-xl transform hover:scale-[1.02] transition-transform duration-300">
             <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-            <div class="space-y-2 text-center sm:text-left">
-                <p class="text-blue-100 text-sm uppercase tracking-wider">Amount to Pay</p>
-                <p class="text-4xl font-bold tracking-tight">GH₵{{ amount|floatformat:2 }}</p>
-            </div>
-            <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
-                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
-                </svg>
-            </div>
+                <div class="space-y-4 text-center sm:text-left">
+                    <p class="text-blue-100 text-sm uppercase tracking-wider">Amount Breakdown</p>
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-blue-100">Dues:</span>
+                            <span class="text-2xl font-bold">GH₵{{ dues_amount|floatformat:2 }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-blue-100">Service Charge:</span>
+                            <span class="text-lg font-semibold">GH₵{{ service_charge|floatformat:2 }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 pt-2 border-t border-white/10">
+                            <span class="text-blue-50">Total:</span>
+                            <span class="text-3xl font-bold">GH₵{{ amount|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+                    </svg>
+                </div>
             </div>
         </div>
 

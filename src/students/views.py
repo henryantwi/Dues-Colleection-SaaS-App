@@ -22,6 +22,7 @@ def _clear_registration_session(request):
 
 def student_registration(request, department_slug, is_year_one=False):
     department = get_object_or_404(Department, slug=department_slug)
+    SERVICE_CHARGE = 2.50  # Add this line
 
     # Store the current path for return redirect
     request.session["registration_return_url"] = request.path
@@ -49,10 +50,15 @@ def student_registration(request, department_slug, is_year_one=False):
                 {
                     "department": department,
                     "is_year_one": is_year_one,
-                    "amount": (
+                    "service_charge": SERVICE_CHARGE,  # Add this line
+                    "dues_amount": (  # Add this line
                         department.year_one_amount
                         if is_year_one
                         else department.other_years_amount
+                    ),
+                    "amount": (  # Update this line
+                        float(department.year_one_amount if is_year_one else department.other_years_amount)
+                        + SERVICE_CHARGE
                     ),
                     **form_data,
                 },
@@ -69,10 +75,15 @@ def student_registration(request, department_slug, is_year_one=False):
                 {
                     "department": department,
                     "is_year_one": is_year_one,
-                    "amount": (
+                    "service_charge": SERVICE_CHARGE,  # Add this line
+                    "dues_amount": (  # Add this line
                         department.year_one_amount
                         if is_year_one
                         else department.other_years_amount
+                    ),
+                    "amount": (  # Update this line
+                        float(department.year_one_amount if is_year_one else department.other_years_amount)
+                        + SERVICE_CHARGE
                     ),
                     **form_data,
                 },
@@ -84,11 +95,17 @@ def student_registration(request, department_slug, is_year_one=False):
             "department_id": department.id,
             "department_name": department.name,
             "is_year_one": is_year_one,
-            "amount": float(
+            "service_charge": SERVICE_CHARGE,  # Add this line
+            "dues_amount": float(
                 department.year_one_amount
                 if is_year_one
                 else department.other_years_amount
             ),
+            "amount": float(  # Update total amount calculation
+                department.year_one_amount
+                if is_year_one
+                else department.other_years_amount
+            ) + SERVICE_CHARGE,
         }
         request.session["registration_preview"] = preview_data
 
@@ -113,10 +130,15 @@ def student_registration(request, department_slug, is_year_one=False):
         {
             "department": department,
             "is_year_one": is_year_one,
-            "amount": (
+            "service_charge": SERVICE_CHARGE,  # Add this line
+            "dues_amount": (  # Add this line
                 department.year_one_amount
                 if is_year_one
                 else department.other_years_amount
+            ),
+            "amount": (  # Update this line
+                float(department.year_one_amount if is_year_one else department.other_years_amount)
+                + SERVICE_CHARGE
             ),
             **initial_data,  # This will populate the form fields with previous data
         },
