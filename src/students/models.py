@@ -18,6 +18,7 @@ image_storage = (
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, blank=True)
+    full_name = models.CharField(max_length=200, unique=True, blank=True, null=True)
     year_one_amount = models.DecimalField(max_digits=10, decimal_places=2)
     other_years_amount = models.DecimalField(max_digits=10, decimal_places=2)
     paystack_secret_key = models.CharField(max_length=200)

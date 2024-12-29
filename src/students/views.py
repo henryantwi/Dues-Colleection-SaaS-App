@@ -10,7 +10,7 @@ from payments.models import Payment
 
 from .models import Department, PendingMomoPayment, Student
 
-ic.disable()
+# ic.disable()
 
 
 def _clear_registration_session(request):
@@ -28,7 +28,7 @@ def student_registration(request, department_slug, is_year_one=False):
 
     # Get preview data from session
     preview_data = request.session.get("registration_preview", {})
-
+    
     if request.method == "POST":
         # Validate form data
         form_data = {
@@ -206,44 +206,12 @@ def registration_preview(request):
                             {"preview_data": preview_data},
                         )
                 elif preview_data["payment_method"] == "Cash":
-                    try:
-                        # Create student for cash payment
-                        student = Student.objects.create(
-                            ref_number=preview_data["ref_number"],
-                            full_name=preview_data["full_name"],
-                            email=preview_data["email"],
-                            mobile=preview_data["mobile"],
-                            department=department,
-                            payment=payment,
-                            year_group=1 if preview_data["is_year_one"] else 2,
-                            level=int(preview_data["level"]) if not preview_data["is_year_one"] else 100,
-                        )
-                        # Update payment status for cash
-                        payment.status = "Pending"
-                        payment.save()
-
-                        # Clear all registration session data after successful processing
-                        request.session.pop("registration_preview", None)
-                        request.session.pop("registration_return_url", None)
-
-                        messages.success(
-                            request,
-                            "Registration successful. Please make cash payment at the department office.",
-                        )
-                        return redirect(
-                            "students:registration_confirmation", student_id=student.id
-                        )
-
-                    except Exception as e:
-                        ic(e)
-                        payment.status = "Failed"
-                        payment.save()
-                        messages.error(request, f"Registration error: {str(e)}")
-                        return render(
-                            request,
-                            "students/preview.html",
-                            {"preview_data": preview_data},
-                        )
+                    messages.error(request, "Cash payment method is currently unavailable. Please use Mobile Money.")
+                    return render(
+                        request,
+                        "students/preview.html",
+                        {"preview_data": preview_data},
+                    )
 
             except Exception as e:
                 ic(e)

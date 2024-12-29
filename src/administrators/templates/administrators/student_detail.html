@@ -15,11 +15,11 @@
                 </h1>
                 <p class="text-gray-600">{{ student.department.name }} Student</p>
                 <div class="flex flex-wrap gap-2">
-                    <a href="{% url 'administrators:search' %}" class="glass-button inline-flex items-center gap-2">
+                    <a href="{% url 'administrators:student_list' %}" class="glass-button inline-flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
-                        Back to Search
+                        All Students
                     </a>
                 </div>
             </div>
@@ -73,6 +73,10 @@
                         <div class="glass-item p-4 rounded-lg">
                             <dt class="text-sm font-medium text-gray-500">Department</dt>
                             <dd class="mt-1 text-lg font-medium text-gray-900">{{ student.department.name }}</dd>
+                        </div>
+                        <div class="glass-item p-4 rounded-lg">
+                            <dt class="text-sm font-medium text-gray-500">Level</dt>
+                            <dd class="mt-1 text-lg font-medium text-gray-900">{{ student.level }}</dd>
                         </div>
                         <div class="glass-item p-4 rounded-lg">
                             <dt class="text-sm font-medium text-gray-500">Academic Year</dt>

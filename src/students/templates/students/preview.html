@@ -35,17 +35,17 @@
     <!-- Content Section -->
     <div class="card-content p-8 space-y-8">
         <!-- Amount Card -->
-        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-8 text-white shadow-xl transform hover:scale-[1.02] transition-transform duration-300">
-            <div class="flex justify-between items-center">
-                <div class="space-y-2">
-                    <p class="text-blue-100 text-sm uppercase tracking-wider">Amount to Pay</p>
-                    <p class="text-4xl font-bold tracking-tight">GH₵{{ preview_data.amount }}</p>
-                </div>
-                <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
-                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
-                    </svg>
-                </div>
+        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl transform hover:scale-[1.02] transition-transform duration-300">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+            <div class="space-y-2">
+                <p class="text-blue-100 text-sm uppercase tracking-wider">Amount to Pay</p>
+                <p class="text-3xl sm:text-4xl font-bold tracking-tight">GH₵{{ preview_data.amount }}</p>
+            </div>
+            <div class="bg-white/10 p-3 sm:p-4 rounded-xl backdrop-blur-sm">
+                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+                </svg>
+            </div>
             </div>
         </div>
 

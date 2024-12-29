@@ -11,7 +11,7 @@
             <div class="space-y-4"> 
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
                     <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                        {% if department %}{{ department.name }}{% else %}All Departments{% endif %} Dashboard
+                        {% if department %}{{ department.full_name|default:department.name }}{% else %}All Departments{% endif %} Dashboard
                     </span>
                 </h1>
                 <div class="flex flex-wrap gap-2">

@@ -54,7 +54,8 @@
                 </div>
                 
                 <div class="p-6 space-y-4">
-                    <h3 class="text-xl font-bold text-gray-900">{{ department.name }}</h3>
+                    <h3 class="text-xl font-bold text-gray-900">{{ department.full_name|default:department.name }}</h3>
+                    <p class="text-sm font-bold text-gray-500">{{ department.name }}</p>
                     <div class="space-y-2">
                         <div class="flex items-center justify-between text-sm">
                             <span class="text-gray-500">First Year Dues:</span>

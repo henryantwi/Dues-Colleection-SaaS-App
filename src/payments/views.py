@@ -127,7 +127,8 @@ def verify_payment(request, reference):
                     mobile=pending_reg.mobile,
                     department=pending_reg.department,
                     payment=payment,
-                    year_group=pending_reg.year_group,  # Add this line to include year_group
+                    year_group=pending_reg.year_group,
+                    level=pending_reg.level,
                 )
                 # Delete pending registration
                 pending_reg.delete()
