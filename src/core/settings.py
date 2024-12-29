@@ -204,7 +204,7 @@ JAZZMIN_SETTINGS = {
         "students.PendingMomoPayment": "fas fa-money-check-alt",
     },
     # Cards
-    "show_ui_builder": True,
+    "show_ui_builder": False,
     
     # Related Modal
     "related_modal_active": True,

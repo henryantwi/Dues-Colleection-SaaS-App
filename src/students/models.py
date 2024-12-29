@@ -25,7 +25,7 @@ class Department(models.Model):
     google_app_password = models.CharField(max_length=200)
     image = ResizedImageField(
         size=[600, 600],
-        quality=85,
+        quality=100,
         upload_to="logos/",
         storage=image_storage,
         null=True,
