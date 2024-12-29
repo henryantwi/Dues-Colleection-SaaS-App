@@ -60,18 +60,18 @@
             {% if student.payment.status == 'Successful' %}from-green-500 to-emerald-600
             {% elif student.payment.status == 'Failed' %}from-red-500 to-rose-600
             {% else %}from-yellow-500 to-amber-600{% endif %}
-            rounded-2xl p-8 text-white shadow-xl transform hover:scale-[1.02] transition-transform duration-300">
-            <div class="flex justify-between items-center">
-                <div class="space-y-2">
-                    <p class="text-white/80 text-sm uppercase tracking-wider">Amount Paid</p>
-                    <p class="text-4xl font-bold tracking-tight">GH₵{{ student.payment.amount|floatformat:2 }}</p>
-                </div>
-                <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
-                    <!-- Payment Icon -->
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
-                    </svg>
-                </div>
+            rounded-2xl p-8 sm:p-6 text-white shadow-xl transform hover:scale-[1.02] transition-transform duration-300">
+            <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+            <div class="space-y-2 text-center sm:text-left">
+                <p class="text-white/80 text-sm uppercase tracking-wider">Amount Paid</p>
+                <p class="text-4xl font-bold tracking-tight">GH₵{{ student.payment.amount|floatformat:2 }}</p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
+                <!-- Payment Icon -->
+                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+                </svg>
+            </div>
             </div>
         </div>
 

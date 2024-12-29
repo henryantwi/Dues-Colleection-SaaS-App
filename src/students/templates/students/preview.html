@@ -6,14 +6,14 @@
 <div class="divide-y divide-gray-200">
     <!-- Header Section -->
     <div class="card-section bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8">
-        <div class="flex items-center justify-between">
-            <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between">
+            <div class="space-y-4 text-center sm:text-left">
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
                     <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
                         Review Registration
                     </span>
                 </h1>
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2 justify-center sm:justify-start">
                     <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200">
                         <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -35,14 +35,14 @@
     <!-- Content Section -->
     <div class="card-content p-8 space-y-8">
         <!-- Amount Card -->
-        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl transform hover:scale-[1.02] transition-transform duration-300">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-            <div class="space-y-2">
+        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-8 sm:p-6 text-white shadow-xl transform hover:scale-[1.02] transition-transform duration-300">
+            <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+            <div class="space-y-2 text-center sm:text-left">
                 <p class="text-blue-100 text-sm uppercase tracking-wider">Amount to Pay</p>
-                <p class="text-3xl sm:text-4xl font-bold tracking-tight">GH₵{{ preview_data.amount }}</p>
+                <p class="text-4xl font-bold tracking-tight">GH₵{{ preview_data.amount|floatformat:2 }}</p>
             </div>
-            <div class="bg-white/10 p-3 sm:p-4 rounded-xl backdrop-blur-sm">
-                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
+                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
                 </svg>
             </div>
