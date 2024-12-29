@@ -189,8 +189,11 @@ JAZZMIN_SETTINGS = {
     "brand_icon": "fas fa-graduation-cap",
     
     # Custom CSS/JS
-    "custom_css": None,
+    "custom_css": "css/custom_admin.css",
     "custom_js": None,
+    
+    # Hide logo on login page
+    "hide_logo_on_login": True,
     
     # Icons
     "icons": {
