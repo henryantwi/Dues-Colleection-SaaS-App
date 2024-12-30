@@ -154,7 +154,13 @@
         /* Responsive adjustments */
         @media (max-width: 640px) {
             .button, button, [type='submit'], [type='button'] {
-                @apply px-4 py-2;
+                @apply px-4 py-3 w-full;  /* Updated padding and width */
+            }
+            .textarea, textarea, input {
+                @apply px-4 py-3;  /* Adjusted padding for mobile */
+            }
+            .card-content {
+                @apply px-3 py-4;  /* Reduced padding on mobile */
             }
             h1 {
                 @apply text-3xl;
