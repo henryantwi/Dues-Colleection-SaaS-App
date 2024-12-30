@@ -132,66 +132,63 @@
                     <div class="form-group">
                         <label class="form-label">Level</label>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <label class="relative block cursor-pointer">
+                            <label class="relative block cursor-pointer group">
                                 <input type="radio" 
                                        name="level" 
                                        value="200"
                                        class="peer sr-only" 
                                        required
                                        {% if level == '200' %}checked{% endif %}>
-                                <div class="rounded-lg border-2 border-gray-200 p-4 hover:border-blue-400 
-                                           peer-checked:border-blue-500 peer-checked:bg-blue-50 
-                                           transition-all duration-200">
+                                <div class="rounded-lg border-2 border-gray-200 p-4 
+                                            hover:border-blue-400 peer-checked:border-blue-500 
+                                            peer-checked:bg-blue-50 transition-all duration-200">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center">
                                             <div class="text-sm">
                                                 <p class="font-medium text-gray-900">Level 200</p>
                                             </div>
                                         </div>
-                                        <div class="w-5 h-5 border-2 rounded-full flex-shrink-0 border-gray-300 
-                                                  peer-checked:border-blue-500 peer-checked:bg-blue-500"></div>
+                                        <div class="radio-circle"></div>
                                     </div>
                                 </div>
                             </label>
 
-                            <label class="relative block cursor-pointer">
+                            <label class="relative block cursor-pointer group">
                                 <input type="radio" 
                                        name="level" 
                                        value="300"
                                        class="peer sr-only" 
                                        {% if level == '300' %}checked{% endif %}>
-                                <div class="rounded-lg border-2 border-gray-200 p-4 hover:border-blue-400 
-                                           peer-checked:border-blue-500 peer-checked:bg-blue-50 
-                                           transition-all duration-200">
+                                <div class="rounded-lg border-2 border-gray-200 p-4 
+                                            hover:border-blue-400 peer-checked:border-blue-500 
+                                            peer-checked:bg-blue-50 transition-all duration-200">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center">
                                             <div class="text-sm">
                                                 <p class="font-medium text-gray-900">Level 300</p>
                                             </div>
                                         </div>
-                                        <div class="w-5 h-5 border-2 rounded-full flex-shrink-0 border-gray-300 
-                                                  peer-checked:border-blue-500 peer-checked:bg-blue-500"></div>
+                                        <div class="radio-circle"></div>
                                     </div>
                                 </div>
                             </label>
 
-                            <label class="relative block cursor-pointer">
+                            <label class="relative block cursor-pointer group">
                                 <input type="radio" 
                                        name="level" 
                                        value="400"
                                        class="peer sr-only" 
                                        {% if level == '400' %}checked{% endif %}>
-                                <div class="rounded-lg border-2 border-gray-200 p-4 hover:border-blue-400 
-                                           peer-checked:border-blue-500 peer-checked:bg-blue-50 
-                                           transition-all duration-200">
+                                <div class="rounded-lg border-2 border-gray-200 p-4 
+                                            hover:border-blue-400 peer-checked:border-blue-500 
+                                            peer-checked:bg-blue-50 transition-all duration-200">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center">
                                             <div class="text-sm">
                                                 <p class="font-medium text-gray-900">Level 400</p>
                                             </div>
                                         </div>
-                                        <div class="w-5 h-5 border-2 rounded-full flex-shrink-0 border-gray-300 
-                                                  peer-checked:border-blue-500 peer-checked:bg-blue-500"></div>
+                                        <div class="radio-circle"></div>
                                     </div>
                                 </div>
                             </label>
@@ -228,7 +225,7 @@
                                                 <p class="text-sm text-gray-500">Pay instantly with MTN, Vodafone, or AirtelTigo</p>
                                             </div>
                                         </div>
-                                        <div class="w-5 h-5 border-2 rounded-full border-gray-300 peer-checked:border-blue-500 peer-checked:bg-blue-500 transition-all duration-200 shrink-0"></div>
+                                        <div class="radio-circle"></div>
                                     </div>
                                 </div>
                             </label>
@@ -253,7 +250,7 @@
                                                 <p class="text-sm text-gray-500">Currently unavailable</p>
                                             </div>
                                         </div>
-                                        <div class="w-5 h-5 border-2 rounded-full border-gray-300 transition-all duration-200 shrink-0"></div>
+                                        <div class="radio-circle"></div>
                                     </div>
                                 </div>
                             </label>
@@ -278,34 +275,16 @@
 {% block extra_js %}
 {{ block.super }}
 <script>
-    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            // Find all radio circles and reset them
-            document.querySelectorAll('input[name="payment_method"] + div .w-5.h-5').forEach(circle => {
-                circle.classList.remove('bg-blue-500');
-            });
-            
-            if (this.checked) {
-                // Find the radio circle next to the checked input and update it
-                const radioCircle = this.nextElementSibling.querySelector('.w-5.h-5');
-                radioCircle.classList.add('bg-blue-500');
+    // Mobile number validation
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('mobile').addEventListener('input', function(e) {
+            let value = e.target.value;
+            value = value.replace(/\D/g, '');
+            if (value.length > 15) {
+                value = value.slice(0, 15);
             }
+            e.target.value = value;
         });
-    });
-
-    // Initialize the checked state on page load
-    document.querySelector('input[name="payment_method"]:checked')?.dispatchEvent(new Event('change'));
-
-    // Add mobile number validation
-    document.getElementById('mobile').addEventListener('input', function(e) {
-        let value = e.target.value;
-        // Remove any non-digit characters
-        value = value.replace(/\D/g, '');
-        // Truncate to max length
-        if (value.length > 15) {
-            value = value.slice(0, 15);
-        }
-        e.target.value = value;
     });
 </script>
 {% endblock %}

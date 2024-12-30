@@ -151,6 +151,21 @@
             @apply w-auto
         }
 
+        /* Form elements */
+        .radio-circle {
+            @apply w-5 h-5 border-2 rounded-full flex-shrink-0 
+                   border-gray-300 transition-all duration-200 
+                   group-hover:border-blue-400;
+        }
+        
+        input[type="radio"]:checked ~ * .radio-circle {
+            @apply border-blue-500 bg-blue-500 ring-2 ring-blue-200;
+        }
+
+        input[type="radio"]:focus ~ * .radio-circle {
+            @apply ring-2 ring-blue-200;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 640px) {
             .button, button, [type='submit'], [type='button'] {
