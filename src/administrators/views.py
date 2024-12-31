@@ -338,7 +338,7 @@ def download_students_csv(request):
     # Create the HttpResponse object with CSV header
     response = HttpResponse(
         content_type='text/csv',
-        headers={'Content-Disposition': 'attachment; filename="students.csv"'},
+        headers={'Content-Disposition': 'attachment; filename=f"students.csv"'},
     )
     
     # Get students based on user's permissions
