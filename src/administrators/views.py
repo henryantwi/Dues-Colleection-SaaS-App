@@ -6,12 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import Count, Q, Sum
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from icecream import ic
+import csv
 
 from payments.models import Payment
 from students.models import Student
@@ -268,3 +269,49 @@ def student_list(request):
         'page_obj': page_obj,
         'query': query
     })
+
+@login_required
+def download_students_csv(request):
+    # Create the HttpResponse object with CSV header
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="students.csv"'},
+    )
+    
+    # Get students based on user's permissions
+    if request.user.is_superuser:
+        students = Student.objects.select_related('department', 'payment').all()
+    else:
+        department = request.user.departmentadmin.department
+        students = Student.objects.select_related('department', 'payment').filter(department=department)
+    
+    # Create CSV writer
+    writer = csv.writer(response)
+    # Write header
+    writer.writerow([
+        'Reference Number',
+        'Full Name',
+        'Email',
+        'Department',
+        'Level',
+        'Payment Status',
+        'Payment Reference',
+        'Amount Paid',
+        'Registration Date'
+    ])
+    
+    # Write data rows
+    for student in students:
+        writer.writerow([
+            student.ref_number,
+            student.full_name,
+            student.email,
+            student.department.name,
+            student.level,
+            student.payment.status if hasattr(student, 'payment') else 'No Payment',
+            student.payment.reference if hasattr(student, 'payment') else 'N/A',
+            student.payment.amount if hasattr(student, 'payment') else '0.00',
+            student.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        ])
+    
+    return response

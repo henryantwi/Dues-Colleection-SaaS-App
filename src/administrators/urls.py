@@ -14,4 +14,5 @@ urlpatterns = [
          views.mark_payment_successful, 
          name='mark_payment_successful'),
     path('students/', views.student_list, name='student_list'),
+    path('students/download/', views.download_students_csv, name='download_students'),
 ]
