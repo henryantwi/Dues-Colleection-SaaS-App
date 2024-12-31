@@ -144,3 +144,4 @@ db.sqlite3
 profile_pics/
 
 dump.rdb
+deploy_commands.txt
