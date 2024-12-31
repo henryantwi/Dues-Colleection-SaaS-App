@@ -1,5 +1,6 @@
 import json
 import re
+import logging
 
 import requests
 from django.conf import settings
@@ -10,6 +11,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from icecream import ic
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.db.models import Sum  # Add this import
 
 from students.models import PendingMomoPayment, Student
 
@@ -18,6 +22,7 @@ from .models import Payment
 
 ic.disable()
 
+logger = logging.getLogger(__name__)
 
 def create_payment(request, student_id):
     student = get_object_or_404(Student, id=student_id)
@@ -132,12 +137,50 @@ def verify_payment(request, reference):
                 )
                 # Delete pending registration
                 pending_reg.delete()
+
+                # Send WebSocket update
+                channel_layer = get_channel_layer()
+                group_name = f"dashboard_{payment.department.id}" if payment.department else "dashboard_all"
+                async_to_sync(channel_layer.group_send)(
+                    group_name,
+                    {
+                        "type": "update_dashboard",
+                        "data": {
+                            "total_amount": float(Payment.objects.filter(status="Successful", department=payment.department).aggregate(total=Sum("amount"))["total"] or 0),
+                            "total_students": Student.objects.filter(department=payment.department).count(),
+                            "paid_students": Student.objects.filter(payment__status="Successful", department=payment.department).distinct().count(),
+                            "pending_payments": Payment.objects.filter(status="Pending", department=payment.department, students__isnull=False).distinct().count(),
+                        },
+                    },
+                )
+
+                # Also send updates to the superuser group
+                async_to_sync(channel_layer.group_send)(
+                    "dashboard_all",
+                    {
+                        "type": "update_dashboard",
+                        "data": {
+                            "total_amount": float(Payment.objects.filter(status="Successful").aggregate(total=Sum("amount"))["total"] or 0),
+                            "total_students": Student.objects.count(),
+                            "paid_students": Student.objects.filter(payment__status="Successful").distinct().count(),
+                            "pending_payments": Payment.objects.filter(status="Pending", students__isnull=False).distinct().count(),
+                        },
+                    },
+                )
+
                 return redirect(
                     "students:registration_confirmation", student_id=student.id
                 )
+            else:
+                logger.error(f"Payment verification failed: {response_data}")
+                messages.error(request, "Payment verification failed. Please try again.")
+        else:
+            logger.error(f"Failed to verify payment with Paystack: {response.status_code} - {response.text}")
+            messages.error(request, "Failed to verify payment. Please try again.")
 
     except Exception as e:
         ic(e)
+        logger.exception("Error verifying payment")
         payment.status = "Failed"
         payment.save()
         messages.error(request, f"Error verifying payment: {str(e)}")

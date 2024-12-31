@@ -18,6 +18,8 @@ from payments.models import Payment
 from students.models import Student
 
 from .forms import EmailAuthenticationForm
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 def login_view(request):
@@ -181,12 +183,43 @@ def admin_dashboard(request):
 
     context = {
         "department": department,
-        "total_amount": total_amount,
+        "total_amount": float(total_amount),  # Convert to float
         "total_students": total_students,
         "paid_students": paid_students,
         "pending_payments": pending_payments,
         "recent_activities": recent_activities,
     }
+
+    # Send updates to WebSocket
+    channel_layer = get_channel_layer()
+    group_name = f"dashboard_{department.id}" if department else "dashboard_all"
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            "type": "update_dashboard",
+            "data": {
+                "total_amount": float(total_amount),  # Convert to float
+                "total_students": total_students,
+                "paid_students": paid_students,
+                "pending_payments": pending_payments,
+            },
+        },
+    )
+
+    # Also send updates to the superuser group
+    if not department:
+        async_to_sync(channel_layer.group_send)(
+            "dashboard_all",
+            {
+                "type": "update_dashboard",
+                "data": {
+                    "total_amount": float(total_amount),  # Convert to float
+                    "total_students": total_students,
+                    "paid_students": paid_students,
+                    "pending_payments": pending_payments,
+                },
+            },
+        )
 
     return render(request, "administrators/admin_dashboard.html", context)
 
@@ -231,6 +264,36 @@ def mark_payment_successful(request, payment_ref):
         payment.status = "Successful"
         payment.save()
         messages.success(request, "Payment has been marked as successful.")
+
+        # Send WebSocket update
+        channel_layer = get_channel_layer()
+        group_name = f"dashboard_{payment.department.id}" if payment.department else "dashboard_all"
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                "type": "update_dashboard",
+                "data": {
+                    "total_amount": float(Payment.objects.filter(status="Successful", department=payment.department).aggregate(total=Sum("amount"))["total"] or 0),
+                    "total_students": Student.objects.filter(department=payment.department).count(),
+                    "paid_students": Student.objects.filter(payment__status="Successful", department=payment.department).distinct().count(),
+                    "pending_payments": Payment.objects.filter(status="Pending", department=payment.department, students__isnull=False).distinct().count(),
+                },
+            },
+        )
+
+        # Also send updates to the superuser group
+        async_to_sync(channel_layer.group_send)(
+            "dashboard_all",
+            {
+                "type": "update_dashboard",
+                "data": {
+                    "total_amount": float(Payment.objects.filter(status="Successful").aggregate(total=Sum("amount"))["total"] or 0),
+                    "total_students": Student.objects.count(),
+                    "paid_students": Student.objects.filter(payment__status="Successful").distinct().count(),
+                    "pending_payments": Payment.objects.filter(status="Pending", students__isnull=False).distinct().count(),
+                },
+            },
+        )
     else:
         messages.error(request, "This payment cannot be modified.")
 

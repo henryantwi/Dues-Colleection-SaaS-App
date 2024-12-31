@@ -64,7 +64,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Total Amount</dt>
-                            <dd class="text-2xl font-bold text-gray-900">GH₵{{ total_amount|floatformat:2 }}</dd>
+                            <dd id="total-amount" class="text-2xl font-bold text-gray-900 fade-in-scale">GH₵{{ total_amount|floatformat:2 }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Total Students</dt>
-                            <dd class="text-2xl font-bold text-gray-900">{{ total_students }}</dd>
+                            <dd id="total-students" class="text-2xl font-bold text-gray-900 fade-in-scale">{{ total_students }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Paid Students</dt>
-                            <dd class="text-2xl font-bold text-gray-900">{{ paid_students }}</dd>
+                            <dd id="paid-students" class="text-2xl font-bold text-gray-900 fade-in-scale">{{ paid_students }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Pending Payments</dt>
-                            <dd class="text-2xl font-bold text-gray-900">{{ pending_payments }}</dd>
+                            <dd id="pending-payments" class="text-2xl font-bold text-gray-900 fade-in-scale">{{ pending_payments }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -186,4 +186,53 @@
         </div>
     </div>
 </div>
+<style>
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(4); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes colorChange {
+        from { color: #000; }
+        to { color: #ff0000; }
+    }
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-30px); }
+        60% { transform: translateY(-15px); }
+    }
+    .fade-in-scale {
+        animation: fadeInScale 0.6s ease, colorChange 0.3s ease, bounce 0.6s ease;
+    }
+</style>
+<script>
+    const department = "{{ department.id }}" || "all";
+    const dashboardSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/dashboard/' + department + '/'
+    );
+
+    dashboardSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        updateValue('total-amount', `GH₵${data.total_amount.toFixed(2)}`);
+        updateValue('total-students', data.total_students);
+        updateValue('paid-students', data.paid_students);
+        updateValue('pending-payments', data.pending_payments);
+    };
+
+    dashboardSocket.onclose = function(e) {
+        console.error('Dashboard socket closed unexpectedly');
+    };
+
+    function updateValue(id, value) {
+        const element = document.getElementById(id);
+        element.classList.remove('fade-in-scale');
+        setTimeout(() => {
+            element.innerText = value;
+            element.classList.add('fade-in-scale');
+        }, 100);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.fade-in').forEach(el => el.classList.add('show'));
+    });
+</script>
 {% endblock %}

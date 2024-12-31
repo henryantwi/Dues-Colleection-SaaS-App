@@ -24,6 +24,7 @@ else:
 
 
 INSTALLED_APPS = [
+    "daphne",  # Add this line
     'jazzmin',  # uncomment this line
     "django.contrib.admin",
     "django.contrib.auth",
@@ -73,7 +74,25 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "core.wsgi.application"
+# WSGI_APPLICATION = "core.wsgi.application"
+
+ASGI_APPLICATION = "core.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
+
+if ENVIRONMENT == "production":
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [config("REDIS_URL", default="redis://localhost:6379")],
+            },
+        },
+    }
 
 DATABASES = {
     "default": {
