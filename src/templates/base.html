@@ -74,6 +74,15 @@
             animation: float 3s ease-in-out infinite;
         }
 
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+
         h1 {
             @apply text-4xl font-bold mb-4
         }
@@ -149,6 +158,11 @@
         }
         input[name="remember"] {
             @apply w-auto
+        }
+
+        /* Button states */
+        button:disabled {
+            @apply opacity-75 cursor-not-allowed;
         }
 
         /* Responsive adjustments */
