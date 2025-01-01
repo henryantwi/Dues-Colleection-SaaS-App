@@ -70,6 +70,17 @@
                            class="w-full">
                 </div>
                 <div>
+                    <input type="tel" 
+                           name="mobile" 
+                           placeholder="Your Mobile Number" 
+                           value="{{ form_data.mobile|default:'' }}"
+                           pattern="[0-9]{10,15}"
+                           minlength="10"
+                           maxlength="15"
+                           required 
+                           class="w-full">
+                </div>
+                <div>
                     <textarea name="message" 
                               rows="4" 
                               placeholder="Your Message" 
