@@ -1,4 +1,5 @@
 import json
+from icecream import ic
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
@@ -6,6 +7,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 class DashboardConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.department = self.scope["url_route"]["kwargs"].get("department")
+        ic(self.department)
+        ic(self.scope["user"].is_authenticated)
         self.group_name = (
             f"dashboard_{self.department}" if self.department else "dashboard_all"
         )

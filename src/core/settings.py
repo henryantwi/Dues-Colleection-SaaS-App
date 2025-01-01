@@ -25,8 +25,8 @@ CSRF_TRUSTED_ORIGINS = ["https://dues-colleection-saas-app.onrender.com"]
 
 
 INSTALLED_APPS = [
-    "daphne",  # Add this line
-    'jazzmin',  # uncomment this line
+    "daphne", 
+    'jazzmin',  
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
