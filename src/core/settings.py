@@ -164,6 +164,57 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 
+# Email settings
+if ENVIRONMENT == "production":
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 465
+    EMAIL_USE_TLS = False
+    EMAIL_USE_SSL = True
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+    DEFAULT_FROM_EMAIL = f"DuesFlow <{config('DEFAULT_FROM_EMAIL')}>"
+    CONTACT_EMAIL = config('CONTACT_EMAIL')
+else:  # Default to console backend for other environments
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_HOST_USER = 'test@example.com'
+    DEFAULT_FROM_EMAIL = 'DuesFlow <test@example.com>'
+    CONTACT_EMAIL = 'contact@example.com'
+
+
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'a_home': {
+            'handlers': ['file', 'console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
+
 JAZZMIN_SETTINGS = {
     # General settings
     "site_title": "DuesFlow Admin",

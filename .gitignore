@@ -145,3 +145,6 @@ profile_pics/
 
 dump.rdb
 deploy_commands.txt
+
+# Local settings
+src/core/local_settings.py
