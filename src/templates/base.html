@@ -75,8 +75,8 @@
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         .animate-spin {
@@ -162,7 +162,11 @@
 
         /* Button states */
         button:disabled {
-            @apply opacity-75 cursor-not-allowed;
+            @apply opacity-75 cursor-not-allowed transition-opacity duration-200;
+        }
+
+        .submit-spinner {
+            @apply transition-all duration-200;
         }
 
         /* Responsive adjustments */

@@ -1,8 +1,7 @@
 from pathlib import Path
 
-from decouple import config
-
 import dj_database_url
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -14,17 +13,20 @@ ENVIRONMENT = config("ENVIRONMENT", default="production")
 POSTGRES_LOCALLY = config("POSTGRES_LOCALLY", default=False, cast=bool)
 
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
-    
+
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ["dues-colleection-saas-app.onrender.com", "localhost", "127.0.0.1", "payments.acsessrid.com"]
-    
-
+    ALLOWED_HOSTS = [
+        "dues-colleection-saas-app.onrender.com",
+        "localhost",
+        "127.0.0.1",
+        "payments.acsessrid.com",
+    ]
 
 
 INSTALLED_APPS = [
-    'jazzmin',  # uncomment this line
+    "jazzmin",  # uncomment this line
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -118,9 +120,9 @@ MEDIA_URL = "/media/"
 
 if ENVIRONMENT == "development":
     MEDIA_ROOT = BASE_DIR / "media"
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 else:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 
 # Serve static files during development with cloudinary
@@ -131,9 +133,9 @@ else:
 
 # Cloudinary configuration
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': config('CLOUDINARY_API_KEY'),
-    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": config("CLOUDINARY_API_KEY"),
+    "API_SECRET": config("CLOUDINARY_API_SECRET"),
 }
 
 # Login/Logout Settings
@@ -150,7 +152,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Session Settings
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_AGE = 3600  # 1 hour in seconds
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -166,51 +168,50 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 
 # Email settings
 if ENVIRONMENT == "production":
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = "smtp.gmail.com"
     EMAIL_PORT = 465
     EMAIL_USE_TLS = False
     EMAIL_USE_SSL = True
-    EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+    EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
     DEFAULT_FROM_EMAIL = f"DuesFlow <{config('DEFAULT_FROM_EMAIL')}>"
-    CONTACT_EMAIL = config('CONTACT_EMAIL')
+    CONTACT_EMAIL = config("CONTACT_EMAIL")
 else:  # Default to console backend for other environments
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    EMAIL_HOST_USER = 'test@example.com'
-    DEFAULT_FROM_EMAIL = 'DuesFlow <test@example.com>'
-    CONTACT_EMAIL = 'contact@example.com'
-
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    EMAIL_HOST_USER = "test@example.com"
+    DEFAULT_FROM_EMAIL = "DuesFlow <test@example.com>"
+    CONTACT_EMAIL = "contact@example.com"
 
 
 # Logging Configuration
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
         },
     },
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-            'formatter': 'verbose',
+    "handlers": {
+        "file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": "debug.log",
+            "formatter": "verbose",
         },
-        'console': {
-            'level': 'ERROR',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+        "console": {
+            "level": "ERROR",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
-    'loggers': {
-        'a_home': {
-            'handlers': ['file', 'console'],
-            'level': 'ERROR',
-            'propagate': True,
+    "loggers": {
+        "a_home": {
+            "handlers": ["file", "console"],
+            "level": "ERROR",
+            "propagate": True,
         },
     },
 }
@@ -223,31 +224,29 @@ JAZZMIN_SETTINGS = {
     "site_logo": "images/logo.svg",
     "welcome_sign": "Welcome to DuesFlow Administration",
     "copyright": "Nesttop Technologies Ltd",
-    
     # Top Menu items
     "topmenu_links": [
         {"name": "Home", "url": "home", "permissions": ["auth.view_user"]},
-        {"name": "Departments", "url": "students:department_list", "permissions": ["auth.view_user"]},
+        {
+            "name": "Departments",
+            "url": "students:department_list",
+            "permissions": ["auth.view_user"],
+        },
         {"model": "students.Student"},
         {"model": "payments.Payment"},
     ],
-
     # UI Customizer
     "show_ui_builder": True,
-    
     # Theme settings
     "dark_mode_theme": False,
     "brand_colour": "blue",
     "accent": "accent",
     "brand_icon": "fas fa-graduation-cap",
-    
     # Custom CSS/JS
     "custom_css": "css/custom_admin.css",
     "custom_js": None,
-    
     # Hide logo on login page
     "hide_logo_on_login": True,
-    
     # Icons
     "icons": {
         "auth": "fas fa-users-cog",
@@ -261,22 +260,20 @@ JAZZMIN_SETTINGS = {
     },
     # Cards
     "show_ui_builder": False,
-    
     # Related Modal
     "related_modal_active": True,
-    
     # Custom Links
     "custom_links": {
-        "students": [{
-            "name": "View Departments", 
-            "url": "students:department_list", 
-            "icon": "fas fa-building"
-        }]
+        "students": [
+            {
+                "name": "View Departments",
+                "url": "students:department_list",
+                "icon": "fas fa-building",
+            }
+        ]
     },
-    
     # Order with respect to model icons
     "order_with_respect_to": ["auth", "students", "payments"],
-
     # Theme colors
     "theme": {
         "primary": "blue",
@@ -316,6 +313,6 @@ JAZZMIN_UI_TWEAKS = {
         "info": "btn-info",
         "warning": "btn-warning",
         "danger": "btn-danger",
-        "success": "btn-success"
-    }
+        "success": "btn-success",
+    },
 }
