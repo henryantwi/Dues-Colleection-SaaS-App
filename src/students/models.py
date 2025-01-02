@@ -32,6 +32,8 @@ class Department(models.Model):
         null=True,
         blank=True,
     )
+    service_charge = models.DecimalField(max_digits=10, decimal_places=2, default=2.50)
+    is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:

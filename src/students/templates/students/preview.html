@@ -44,10 +44,12 @@
                             <span class="text-blue-100">Dues:</span>
                             <span class="text-2xl font-bold">GH₵{{ preview_data.dues_amount|floatformat:2 }}</span>
                         </div>
+                        {% if preview_data.service_charge > 0 %}
                         <div class="flex items-center gap-2">
                             <span class="text-blue-100">Service Charge:</span>
                             <span class="text-lg font-semibold">GH₵{{ preview_data.service_charge|floatformat:2 }}</span>
                         </div>
+                        {% endif %}
                         <div class="flex items-center gap-2 pt-2 border-t border-white/10">
                             <span class="text-blue-50">Total:</span>
                             <span class="text-3xl font-bold">GH₵{{ preview_data.amount|floatformat:2 }}</span>

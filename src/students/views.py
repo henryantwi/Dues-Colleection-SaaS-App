@@ -21,15 +21,15 @@ def _clear_registration_session(request):
 
 
 def student_registration(request, department_slug, is_year_one=False):
-    department = get_object_or_404(Department, slug=department_slug)
-    SERVICE_CHARGE = 2.50 
+    department = get_object_or_404(Department, slug=department_slug, is_active=True)
+    SERVICE_CHARGE = float(department.service_charge)
 
     # Store the current path for return redirect
     request.session["registration_return_url"] = request.path
 
     # Get preview data from session
     preview_data = request.session.get("registration_preview", {})
-    
+
     if request.method == "POST":
         # Validate form data
         form_data = {
@@ -57,7 +57,11 @@ def student_registration(request, department_slug, is_year_one=False):
                         else department.other_years_amount
                     ),
                     "amount": (  # Update this line
-                        float(department.year_one_amount if is_year_one else department.other_years_amount)
+                        float(
+                            department.year_one_amount
+                            if is_year_one
+                            else department.other_years_amount
+                        )
                         + SERVICE_CHARGE
                     ),
                     **form_data,
@@ -82,7 +86,11 @@ def student_registration(request, department_slug, is_year_one=False):
                         else department.other_years_amount
                     ),
                     "amount": (  # Update this line
-                        float(department.year_one_amount if is_year_one else department.other_years_amount)
+                        float(
+                            department.year_one_amount
+                            if is_year_one
+                            else department.other_years_amount
+                        )
                         + SERVICE_CHARGE
                     ),
                     **form_data,
@@ -105,7 +113,8 @@ def student_registration(request, department_slug, is_year_one=False):
                 department.year_one_amount
                 if is_year_one
                 else department.other_years_amount
-            ) + SERVICE_CHARGE,
+            )
+            + SERVICE_CHARGE,
         }
         request.session["registration_preview"] = preview_data
 
@@ -114,7 +123,7 @@ def student_registration(request, department_slug, is_year_one=False):
 
     # Check if we're coming back to edit
     initial_data = {}
-    if (preview_data):
+    if preview_data:
         initial_data = {
             "ref_number": preview_data.get("ref_number", ""),
             "full_name": preview_data.get("full_name", ""),
@@ -137,7 +146,11 @@ def student_registration(request, department_slug, is_year_one=False):
                 else department.other_years_amount
             ),
             "amount": (  # Update this line
-                float(department.year_one_amount if is_year_one else department.other_years_amount)
+                float(
+                    department.year_one_amount
+                    if is_year_one
+                    else department.other_years_amount
+                )
                 + SERVICE_CHARGE
             ),
             **initial_data,  # This will populate the form fields with previous data
@@ -159,8 +172,12 @@ def registration_preview(request):
             # Keep the preview data in session when going back to edit
             return_url = request.POST.get("return_url", "")
             if not return_url:
-                department = get_object_or_404(Department, id=preview_data["department_id"])
-                return redirect("students:registration", department_slug=department.slug)
+                department = get_object_or_404(
+                    Department, id=preview_data["department_id"]
+                )
+                return redirect(
+                    "students:registration", department_slug=department.slug
+                )
             return redirect(return_url)
 
         elif "confirm" in request.POST:
@@ -228,7 +245,10 @@ def registration_preview(request):
                             {"preview_data": preview_data},
                         )
                 elif preview_data["payment_method"] == "Cash":
-                    messages.error(request, "Cash payment method is currently unavailable. Please use Mobile Money.")
+                    messages.error(
+                        request,
+                        "Cash payment method is currently unavailable. Please use Mobile Money.",
+                    )
                     return render(
                         request,
                         "students/preview.html",
@@ -257,9 +277,7 @@ def registration_confirmation(request, student_id):
 
 
 def department_list(request):
-    departments = Department.objects.all()
-    return render(request, "students/department_list.html", {"departments": departments})
-    return render(request, "students/department_list.html", {"departments": departments})
-
-
-
+    departments = Department.objects.filter(is_active=True)
+    return render(
+        request, "students/department_list.html", {"departments": departments}
+    )
