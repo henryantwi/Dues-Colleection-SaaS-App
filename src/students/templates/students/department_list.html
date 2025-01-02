@@ -44,12 +44,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for department in departments|dictsort:"name" %}
             <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100/50 overflow-hidden 
-                        transition-all duration-300 transform hover:-translate-y-1">
-                <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-gray-100 to-gray-50 relative overflow-hidden">
+                        transition-all duration-300 transform hover:-translate-y-1 h-[650px] grid grid-rows-[250px_1fr]">
+                <div class="relative w-full h-[250px] bg-gradient-to-br from-gray-100 to-gray-50">
                     {% if department.image %}
                     <img src="{{ department.image.url }}" 
                          alt="{{ department.name }}" 
-                         class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                         class="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-500">
                     {% else %}
                     <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-50">
                         <svg class="w-16 h-16 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,9 +59,9 @@
                     {% endif %}
                 </div>
                 
-                <div class="p-6 space-y-4">
+                <div class="p-6 grid grid-rows-[auto_1fr_auto] gap-4">
                     <div class="space-y-2">
-                        <h3 class="text-xl font-bold text-gray-900">{{ department.full_name|default:department.name }}</h3>
+                        <h3 class="text-xl font-bold text-gray-900 line-clamp-2">{{ department.full_name|default:department.name }}</h3>
                         <p class="text-sm font-medium text-indigo-600">{{ department.name }}</p>
                     </div>
 
@@ -82,7 +82,7 @@
                         </div>
                     </div>
                     
-                    <div class="flex flex-col gap-3 pt-2">
+                    <div class="flex flex-col gap-3">
                         <a href="{% url 'students:registration_year_one' department.slug %}" 
                            class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 transform transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
