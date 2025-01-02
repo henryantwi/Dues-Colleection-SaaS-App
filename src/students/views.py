@@ -22,7 +22,7 @@ def _clear_registration_session(request):
 
 def student_registration(request, department_slug, is_year_one=False):
     department = get_object_or_404(Department, slug=department_slug)
-    SERVICE_CHARGE = 2.50  # Add this line
+    SERVICE_CHARGE = 2.50 
 
     # Store the current path for return redirect
     request.session["registration_return_url"] = request.path
