@@ -148,3 +148,5 @@ deploy_commands.txt
 
 # Local settings
 src/core/local_settings.py
+
+debug.log

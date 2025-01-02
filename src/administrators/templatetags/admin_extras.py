@@ -1,4 +1,5 @@
 from django import template
+from django.template.defaultfilters import floatformat
 
 register = template.Library()
 
@@ -14,3 +15,10 @@ def get_item(lst, i):
         return lst[i]
     except:
         return ''
+
+@register.filter
+def currency_format(value):
+    try:
+        return "{:,.2f}".format(float(value))
+    except (ValueError, TypeError):
+        return value

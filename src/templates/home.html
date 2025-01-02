@@ -45,25 +45,20 @@
                 {% endif %}
             {% else %}
                 <div class="prose prose-lg mx-auto mb-6 sm:mb-8 px-4">
-                    <p class="text-sm sm:text-base">Welcome to the Student Association Dues Payment System. To make a payment, please use the registration link provided by your department.</p>
-                    <p class="font-medium text-sm sm:text-base">Example: /students/register/[department-slug]/[year-one]/</p>
+                    <p class="text-sm sm:text-base">DuesFlow is a powerful web application designed to streamline dues collection for various associations. With our intuitive platform, managing member contributions has never been easier.</p>
                 </div>
                 
-                <div class="bg-blue-100 rounded-lg p-4 sm:p-6 text-left">
-                    <h2 class="text-lg sm:text-xl font-semibold mb-4">For Department Administrators</h2>
-                    <p class="mb-4 text-sm sm:text-base">If you are a department administrator, please sign in to access your dashboard.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                     <a href="{% url 'administrators:login' %}" 
-                       class="w-full sm:w-auto glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg inline-flex justify-center items-center">
-                        Sign In
+                       class="w-full sm:w-auto glass-button bg-gradient-to-r from-primary to-accent text-white hover:from-primary-hover hover:to-accent px-6 py-3 rounded-lg inline-flex justify-center items-center text-white">
+                        Sign In as Department Admin
+                    </a>
+                    <a href="{% url 'students:department_list' %}" 
+                       class="w-full sm:w-auto px-6 py-3 rounded-xl font-medium text-white shadow-sm bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 hover:-translate-y-0.5 text-center">
+                        View Departments
                     </a>
                 </div>
             {% endif %}
-            <div class="mt-8">
-                <a href="{% url 'students:department_list' %}" 
-                   class="w-full sm:w-auto px-6 py-3 rounded-xl font-medium text-white shadow-sm bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 hover:-translate-y-0.5 text-center">
-                    View Departments
-                </a>
-            </div>
         </div>
     </div>
 </div>
