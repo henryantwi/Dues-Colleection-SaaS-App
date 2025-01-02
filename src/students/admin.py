@@ -5,7 +5,7 @@ from .models import Department, PendingMomoPayment, Student
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ("name", "year_one_amount", "other_years_amount")
+    list_display = ("name", "year_one_amount", "other_years_amount", "is_active")
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ("name",)
 
