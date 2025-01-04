@@ -48,7 +48,7 @@ def contact_view(request):
                 )
 
                 # Send email
-                ic(settings.CONTACT_EMAIL)
+                
                 ic(settings.DEFAULT_FROM_EMAIL)
                 send_mail(
                     subject=email_subject,
