@@ -177,12 +177,16 @@ if ENVIRONMENT == "production":
     EMAIL_HOST_USER = config("EMAIL_HOST_USER")
     EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
     DEFAULT_FROM_EMAIL = f"DuesFlow <{config('DEFAULT_FROM_EMAIL')}>"
-    CONTACT_EMAIL = config("CONTACT_EMAIL")
+    CONTACT_EMAIL_1 = config("CONTACT_EMAIL_1")
+    CONTACT_EMAIL_2 = config("CONTACT_EMAIL_2")
+    CONTACT_EMAIL_3 = config("CONTACT_EMAIL_3")
 else:  # Default to console backend for other environments
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     EMAIL_HOST_USER = "test@example.com"
     DEFAULT_FROM_EMAIL = "DuesFlow <test@example.com>"
-    CONTACT_EMAIL = "contact@example.com"
+    CONTACT_EMAIL_1 = "contact1@example.com"
+    CONTACT_EMAIL_2 = "contact2@example.com"
+    CONTACT_EMAIL_3 = "contact3@example.com"
 
 
 # Logging Configuration

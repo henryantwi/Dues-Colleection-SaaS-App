@@ -55,9 +55,9 @@ def contact_view(request):
                     message=message,
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[
-                        "henryantwi191@gmail.com",
-                        "evansankomah640@gmail.com",
-                        "antwi.henry@outlook.com",
+                        settings.CONTACT_EMAIL_1,
+                        settings.CONTACT_EMAIL_2,
+                        settings.CONTACT_EMAIL_3,
                     ],
                     html_message=email_body,
                     fail_silently=False,
