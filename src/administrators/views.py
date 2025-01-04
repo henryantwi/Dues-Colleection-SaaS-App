@@ -26,7 +26,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            messages.success(request, f"Welcome back, {user.email}!")
+            messages.success(request, f"Welcome back, {user.username.capitalize()}! 👋")
             return redirect("home")
         else:
             messages.error(request, "Invalid email or password.")
@@ -36,8 +36,10 @@ def login_view(request):
 
 
 def logout_view(request):
+    name: str = request.user.username.capitalize()
     logout(request)
-    messages.info(request, "You have been logged out.")
+    # messages.info(request, "You have been logged out.")
+    messages.info(request, f"Good bye, {name}👋.")
     return redirect("administrators:login")
 
 
