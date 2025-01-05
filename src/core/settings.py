@@ -168,6 +168,7 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 
+
 # Email settings
 if ENVIRONMENT == "production":
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
