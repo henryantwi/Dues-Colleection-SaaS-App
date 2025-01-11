@@ -10,7 +10,6 @@ from payments.models import Payment
 
 from .models import Department, PendingMomoPayment, Student
 
-# ic.disable()
 
 
 def _clear_registration_session(request):
@@ -26,6 +25,7 @@ def student_registration(request, department_slug, is_year_one=False):
 
     # Store the current path for return redirect
     request.session["registration_return_url"] = request.path
+    ic(request.session["registration_return_url"])
 
     # Get preview data from session
     preview_data = request.session.get("registration_preview", {})
@@ -217,24 +217,36 @@ def registration_preview(request):
                         )
 
                         response_data = response.json()
+                        print(response_data)
                         if response.status_code == 200 and response_data.get("status"):
                             # Store in database instead of session
-                            PendingMomoPayment.objects.create(
-                                ref_number=preview_data["ref_number"],
-                                full_name=preview_data["full_name"],
-                                email=preview_data["email"],
-                                mobile=preview_data["mobile"],
-                                department=department,
-                                payment=payment,
-                                year_group=1 if preview_data["is_year_one"] else 2,
-                                level=int(preview_data["level"]),
-                            )
+                            try:
+                                PendingMomoPayment.objects.create(
+                                    ref_number=preview_data["ref_number"],
+                                    full_name=preview_data["full_name"],
+                                    email=preview_data["email"],
+                                    mobile=preview_data["mobile"],
+                                    department=department,
+                                    payment=payment,
+                                    year_group=1 if preview_data["is_year_one"] else 2,
+                                    level=int(preview_data["level"]),
+                                )
+                                print("Pending payment created")
+                            except Exception as e:
+                                print("Payment not created")
+                                print(e)
+                                messages.error(request, f"Error creating pending payment: {str(e)}")
+                                return render(
+                                    request,
+                                    "students/preview.html",
+                                    {"preview_data": preview_data},
+                                )
                             # Clear all registration session data after successful processing
                             request.session.pop("registration_preview", None)
                             request.session.pop("registration_return_url", None)
                             return redirect(response_data["data"]["authorization_url"])
                     except Exception as e:
-                        ic(e)
+                        print(e)
                         payment.status = "Failed"
                         payment.save()
                         messages.error(request, f"Payment processing error: {str(e)}")
@@ -256,7 +268,7 @@ def registration_preview(request):
                     )
 
             except Exception as e:
-                ic(e)
+                print(e)
                 messages.error(request, f"Error processing payment: {str(e)}")
                 # Return to preview page with data intact
                 return render(

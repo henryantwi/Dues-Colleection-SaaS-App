@@ -5,7 +5,6 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 ENVIRONMENT = config("ENVIRONMENT", default="production")
@@ -24,13 +23,12 @@ else:
         "127.0.0.1",
         "payments.acsessrid.com",
         # "nesttop.tech",
-        # "dev-env.nesttop.tech",
+        "dev-env.nesttop.tech",
     ]
 
-# CSRF_TRUSTED_ORIGINS = [
-#     "https://dev-env.nesttop.tech",
-# ]
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://dev-env.nesttop.tech",
+]
 
 INSTALLED_APPS = [
     "jazzmin",  # uncomment this line
@@ -131,7 +129,6 @@ if ENVIRONMENT == "development":
 else:
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
-
 # Serve static files during development with cloudinary
 if ENVIRONMENT == "production":
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -163,7 +160,6 @@ SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_AGE = 3600  # 1 hour in seconds
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-
 # Add after AUTHENTICATION_BACKENDS
 AUTH_USER_MODEL = "auth.User"
 
@@ -193,7 +189,6 @@ else:  # Default to console backend for other environments
     CONTACT_EMAIL_1 = "contact1@example.com"
     CONTACT_EMAIL_2 = "contact2@example.com"
     CONTACT_EMAIL_3 = "contact3@example.com"
-
 
 # Logging Configuration
 LOGGING = {

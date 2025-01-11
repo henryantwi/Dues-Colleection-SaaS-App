@@ -99,19 +99,16 @@ def verify_payment(request, reference):
     # Get payment record
     try:
         payment = Payment.objects.get(reference=reference)
-        pending_reg = PendingMomoPayment.objects.get(payment=payment)
     except Payment.DoesNotExist:
         messages.error(request, "Invalid payment reference")
         return redirect("home")
 
     # Verify with Paystack API
     try:
-        ic(payment.department.paystack_secret_key)
         headers = {"Authorization": f"Bearer {payment.department.paystack_secret_key}"}
         response = requests.get(
             f"https://api.paystack.co/transaction/verify/{reference}", headers=headers
         )
-        ic(response.status_code)
         if response.status_code == 200:
             response_data = response.json()
 
@@ -119,32 +116,35 @@ def verify_payment(request, reference):
                 payment.status = "Successful"
                 payment.save()
 
-                # Create student from pending registration
-                student = Student.objects.create(
-                    ref_number=pending_reg.ref_number,
-                    full_name=pending_reg.full_name,
-                    email=pending_reg.email,
-                    mobile=pending_reg.mobile,
-                    department=pending_reg.department,
-                    payment=payment,
-                    year_group=pending_reg.year_group,
-                    level=pending_reg.level,
-                )
-                # Delete pending registration
-                pending_reg.delete()
-                return redirect(
-                    "students:registration_confirmation", student_id=student.id
-                )
+                try:
+                    pending_reg = PendingMomoPayment.objects.get(payment=payment)
+                    # Create student from pending registration
+                    student = Student.objects.create(
+                        ref_number=pending_reg.ref_number,
+                        full_name=pending_reg.full_name,
+                        email=pending_reg.email,
+                        mobile=pending_reg.mobile,
+                        department=pending_reg.department,
+                        payment=payment,
+                        year_group=pending_reg.year_group,
+                        level=pending_reg.level,
+                    )
+                    # Delete pending registration
+                    pending_reg.delete()
+                    return redirect(
+                        "students:registration_confirmation", student_id=student.id
+                    )
+                except PendingMomoPayment.DoesNotExist:
+                    messages.error(request, "Pending registration not found.")
+                    return redirect("home")
 
     except Exception as e:
-        ic(e)
         payment.status = "Failed"
         payment.save()
         messages.error(request, f"Error verifying payment: {str(e)}")
         return redirect("payments:payment_failed", reference=reference)
 
     return redirect("home")
-
 
 @login_required
 def mark_payment_as_paid(request, reference):
