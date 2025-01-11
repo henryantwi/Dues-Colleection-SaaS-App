@@ -131,6 +131,12 @@ def verify_payment(request, reference):
                     )
                     # Delete pending registration
                     pending_reg.delete()
+                    
+                    # Clear all session data after successful payment
+                    request.session.pop('registration_preview', None)
+                    request.session.pop('registration_return_url', None)
+                    request.session.pop('pending_payment_ref', None)
+                    
                     return redirect(
                         "students:registration_confirmation", student_id=student.id
                     )

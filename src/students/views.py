@@ -163,9 +163,7 @@ def registration_preview(request):
 
     if not preview_data:
         messages.error(request, "No registration data found. Please start over.")
-        # Get first department as fallback
-        department = Department.objects.first()
-        return redirect("students:registration", department_slug=department.slug)
+        return redirect("students:department_list")
 
     if request.method == "POST":
         if "edit" in request.POST:
@@ -185,15 +183,12 @@ def registration_preview(request):
                 department = get_object_or_404(
                     Department, id=preview_data["department_id"]
                 )
-
-                # Create payment first
                 payment = Payment.objects.create(
                     department=department,
                     method=preview_data["payment_method"],
                     amount=preview_data["amount"],
                 )
 
-                # Handle payment method before creating student
                 if preview_data["payment_method"] == "Mobile Money":
                     try:
                         headers = {
@@ -219,43 +214,51 @@ def registration_preview(request):
                         response_data = response.json()
                         print(response_data)
                         if response.status_code == 200 and response_data.get("status"):
-                            # Store in database instead of session
                             try:
-                                PendingMomoPayment.objects.create(
-                                    ref_number=preview_data["ref_number"],
-                                    full_name=preview_data["full_name"],
-                                    email=preview_data["email"],
-                                    mobile=preview_data["mobile"],
-                                    department=department,
-                                    payment=payment,
-                                    year_group=1 if preview_data["is_year_one"] else 2,
-                                    level=int(preview_data["level"]),
-                                )
-                                print("Pending payment created")
+                                # Check for existing pending payment
+                                existing_pending = PendingMomoPayment.objects.filter(
+                                    ref_number=preview_data["ref_number"]
+                                ).first()
+                                
+                                if existing_pending:
+                                    # Update existing record with new payment
+                                    existing_pending.payment = payment
+                                    existing_pending.full_name = preview_data["full_name"]
+                                    existing_pending.email = preview_data["email"]
+                                    existing_pending.mobile = preview_data["mobile"]
+                                    existing_pending.level = int(preview_data["level"])
+                                    existing_pending.year_group = 1 if preview_data["is_year_one"] else 2
+                                    existing_pending.save()
+                                else:
+                                    # Create new pending payment record
+                                    PendingMomoPayment.objects.create(
+                                        ref_number=preview_data["ref_number"],
+                                        full_name=preview_data["full_name"],
+                                        email=preview_data["email"],
+                                        mobile=preview_data["mobile"],
+                                        department=department,
+                                        payment=payment,
+                                        year_group=1 if preview_data["is_year_one"] else 2,
+                                        level=int(preview_data["level"]),
+                                    )
+
+                                # Don't clear the session data yet - only store the payment reference
+                                request.session['pending_payment_ref'] = payment.reference
+                                return redirect(response_data["data"]["authorization_url"])
+
                             except Exception as e:
-                                print("Payment not created")
-                                print(e)
-                                messages.error(request, f"Error creating pending payment: {str(e)}")
-                                return render(
-                                    request,
-                                    "students/preview.html",
-                                    {"preview_data": preview_data},
-                                )
-                            # Clear all registration session data after successful processing
-                            request.session.pop("registration_preview", None)
-                            request.session.pop("registration_return_url", None)
-                            return redirect(response_data["data"]["authorization_url"])
+                                payment.status = "Failed"
+                                payment.save()
+                                messages.error(request, f"Error processing payment: {str(e)}")
+                                return render(request, "students/preview.html", 
+                                           {"preview_data": preview_data})
                     except Exception as e:
-                        print(e)
                         payment.status = "Failed"
                         payment.save()
-                        messages.error(request, f"Payment processing error: {str(e)}")
-                        # Return to preview page with data intact
-                        return render(
-                            request,
-                            "students/preview.html",
-                            {"preview_data": preview_data},
-                        )
+                        messages.error(request, f"Payment initialization error: {str(e)}")
+                        return render(request, "students/preview.html",
+                                    {"preview_data": preview_data})
+
                 elif preview_data["payment_method"] == "Cash":
                     messages.error(
                         request,
@@ -268,12 +271,26 @@ def registration_preview(request):
                     )
 
             except Exception as e:
-                print(e)
                 messages.error(request, f"Error processing payment: {str(e)}")
-                # Return to preview page with data intact
-                return render(
-                    request, "students/preview.html", {"preview_data": preview_data}
-                )
+                return render(request, "students/preview.html", 
+                            {"preview_data": preview_data})
+
+    # Check if there's a pending payment reference in session
+    pending_ref = request.session.get('pending_payment_ref')
+    if pending_ref:
+        try:
+            # Check if payment was successful
+            payment = Payment.objects.get(reference=pending_ref)
+            if payment.status == "Successful":
+                # Clear all session data if payment was successful
+                _clear_registration_session(request)
+                request.session.pop('pending_payment_ref', None)
+            elif payment.status == "Failed":
+                # Clear only the payment reference if failed
+                request.session.pop('pending_payment_ref', None)
+        except Payment.DoesNotExist:
+            # Clear the payment reference if payment doesn't exist
+            request.session.pop('pending_payment_ref', None)
 
     # Add the current path to the preview data
     preview_data["return_url"] = request.session.get("registration_return_url")
