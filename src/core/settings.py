@@ -30,6 +30,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://dev-env.nesttop.tech",
 ]
 
+
+
 INSTALLED_APPS = [
     "django_extensions",
     "jazzmin",
