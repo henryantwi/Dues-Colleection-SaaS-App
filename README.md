@@ -2,12 +2,6 @@
 
 A basic Django project template to kickstart your web development projects.
 
-## Features
-
-- Basic Django project structure
-- Pre-configured settings
-- Ready-to-use development environment
-
 ## Getting Started
 
 1. Clone this repository
