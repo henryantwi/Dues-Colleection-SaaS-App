@@ -279,13 +279,11 @@ def student_list(request):
 
 @login_required
 def download_students_csv(request):
-    # Create the HttpResponse object with CSV header
     response = HttpResponse(
         content_type="text/csv",
         headers={"Content-Disposition": 'attachment; filename="students.csv"'},
     )
 
-    # Get students based on user's permissions
     if request.user.is_superuser:
         students = Student.objects.select_related("department", "payment").all()
     else:
@@ -294,27 +292,22 @@ def download_students_csv(request):
             department=department
         )
 
-    # Create CSV writer
     writer = csv.writer(response)
-    # Write header
-    writer.writerow(
-        [
-            "Reference Number",
-            "Full Name",
-            "Email",
-            "Department",
-            "Level",
-            "Payment Status",
-            "Payment Reference",
-            "Amount Paid",
-            "T-shirt Status",  # Keep only T-shirt Status, remove T-shirt Option
-            "Registration Date",
-        ]
-    )
+    # Create base header list
+    header = [
+        "Reference Number",
+        "Full Name",
+        "Email",
+        "Department",
+        "Level",
+        "Payment Status",
+        "Payment Reference",
+        "Amount Paid",
+        "Registration Date",
+    ]
 
     # Write data rows
     for student in students:
-        # Get payment status safely
         payment_status = "No Payment"
         payment_reference = "N/A"
         payment_amount = "0.00"
@@ -324,29 +317,37 @@ def download_students_csv(request):
             payment_reference = student.payment.reference
             payment_amount = student.payment.amount
 
-        # Get T-shirt status
-        tshirt_status = "N/A"
-        if student.year_group == 1 and student.department.tshirt_included:
-            if student.tshirt_option == 'full':
-                tshirt_status = "Full Payment"
-            elif student.tshirt_option == 'partial':
-                tshirt_status = "Partial Payment"
-            else:
-                tshirt_status = "No T-shirt"
+        # Create base row data
+        row_data = [
+            student.ref_number,
+            student.full_name,
+            student.email,
+            student.department.name,
+            student.level,
+            payment_status,
+            payment_reference,
+            payment_amount,
+            student.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        ]
 
-        writer.writerow(
-            [
-                student.ref_number,
-                student.full_name,
-                student.email,
-                student.department.name,
-                student.level,
-                payment_status,
-                payment_reference,
-                payment_amount,
-                tshirt_status,
-                student.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-            ]
-        )
+        # Add T-shirt status if department has t-shirt option
+        if student.department.tshirt_included:
+            if not header[-1] == "T-shirt Status":  # Add header if not already added
+                header.append("T-shirt Status")
+                writer.writerow(header)
+
+            tshirt_status = "N/A"
+            if student.year_group == 1:
+                if student.tshirt_option == 'full':
+                    tshirt_status = "Full Payment"
+                elif student.tshirt_option == 'partial':
+                    tshirt_status = "Partial Payment"
+                else:
+                    tshirt_status = "No T-shirt"
+            row_data.append(tshirt_status)
+        elif header.count("T-shirt Status") == 0:  # Write header if not a t-shirt department
+            writer.writerow(header)
+
+        writer.writerow(row_data)
 
     return response

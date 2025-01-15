@@ -215,22 +215,20 @@ def registration_preview(request):
 
     if request.method == "POST":
         if "edit" in request.POST:
-            # Keep the preview data in session when going back to edit
-            return_url = request.POST.get("return_url", "")
+            # Get the return URL from the form
+            return_url = request.POST.get("return_url")
+            
+            # If no return URL, get department from preview data and redirect to registration
             if not return_url:
-                department = get_object_or_404(
-                    Department, id=preview_data["department_id"]
-                )
-                return redirect(
-                    "students:registration", department_slug=department.slug
-                )
+                department = get_object_or_404(Department, id=preview_data["department_id"])
+                return redirect("students:registration", department_slug=department.slug)
+            
+            # Redirect to the stored return URL
             return redirect(return_url)
 
         elif "confirm" in request.POST:
             try:
-                department = get_object_or_404(
-                    Department, id=preview_data["department_id"]
-                )
+                department = get_object_or_404(Department, id=preview_data["department_id"])
                 payment = Payment.objects.create(
                     department=department,
                     method=preview_data["payment_method"],
@@ -238,6 +236,7 @@ def registration_preview(request):
                 )
 
                 if preview_data["payment_method"] == "Mobile Money":
+                    
                     try:
                         headers = {
                             "Authorization": f"Bearer {department.paystack_secret_key}",

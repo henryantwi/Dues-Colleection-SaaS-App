@@ -8,7 +8,7 @@
         <p class="mt-2 text-sm text-gray-600">Please sign in to your account</p>
     </div>
 
-    <form method="post" class="space-y-6">
+    <form method="post" class="space-y-6" onsubmit="handleSubmit(event)">
         {% csrf_token %}
         <div class="space-y-2">
             <label for="id_username" class="block text-sm font-medium text-gray-700">
@@ -28,10 +28,44 @@
                    placeholder="Enter your password"
                    required>
         </div>
-        <button type="submit" class="w-full h-14 sm:h-auto py-2.5 px-4 glass-button bg-gradient-to-r from-primary to-accent text-white font-medium rounded-md hover:from-primary-hover hover:to-accent shadow-sm transition-all duration-150 hover:shadow">
-            Sign In
-            <i class="fas fa-arrow-right ml-2"></i>
+        <button type="submit" id="submitBtn" class="w-full h-14 sm:h-auto py-2.5 px-4 glass-button bg-gradient-to-r from-primary to-accent text-white font-medium rounded-md hover:from-primary-hover hover:to-accent shadow-sm transition-all duration-150 hover:shadow relative">
+            <span class="submit-text">Sign In</span>
+            <div class="hidden submit-spinner absolute inset-0 flex items-center justify-center">
+                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
         </button>
     </form>
 </div>
+
+<script>
+    function handleSubmit(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = submitBtn.querySelector('.submit-text');
+        const submitSpinner = submitBtn.querySelector('.submit-spinner');
+        
+        if (submitBtn.disabled) {
+            e.preventDefault();
+            return false;
+        }
+        
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-75');
+        submitText.classList.add('invisible');
+        submitSpinner.classList.remove('hidden');
+        
+        setTimeout(() => {
+            if (submitBtn.disabled) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75');
+                submitText.classList.remove('invisible');
+                submitSpinner.classList.add('hidden');
+            }
+        }, 30000);
+        
+        return true;
+    }
+</script>
 {% endblock %}
