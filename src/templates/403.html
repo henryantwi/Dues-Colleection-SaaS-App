@@ -1,0 +1,21 @@
+{% extends 'layouts/blank.html' %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center">
+    <div class="glass-card max-w-lg mx-auto p-8 text-center">
+        <div class="w-24 h-24 mx-auto mb-6 bg-orange-50 rounded-full flex items-center justify-center">
+            <svg class="w-12 h-12 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0H9m3-3V8m0 0l2-2m-2 2l-2-2M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/>
+            </svg>
+        </div>
+        <h1 class="text-4xl font-bold mb-4 gradient-text">Access Denied</h1>
+        <p class="text-gray-600 mb-8">
+            You don't have permission to access this page.
+        </p>
+        <a href="/" class="glass-button bg-gradient-to-r from-primary to-accent text-white
+        hover:from-primary-hover hover:to-accent inline-block">
+            Return Home
+        </a>
+    </div>
+</div>
+{% endblock %}

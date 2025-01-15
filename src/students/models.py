@@ -80,11 +80,10 @@ class Student(models.Model):
     tshirt_option = models.CharField(
         max_length=20,
         choices=[
-            ('none', 'No T-shirt'),
             ('full', 'Full T-shirt Payment'),
             ('partial', 'Partial T-shirt Payment'),
         ],
-        default='none'
+        default='full'  # Changed default from 'none' to 'full'
     )
 
     def save(self, *args, **kwargs):

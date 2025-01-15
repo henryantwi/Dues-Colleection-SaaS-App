@@ -340,10 +340,8 @@ def download_students_csv(request):
             if student.year_group == 1:
                 if student.tshirt_option == 'full':
                     tshirt_status = "Full Payment"
-                elif student.tshirt_option == 'partial':
+                else:  # partial is the only other option now
                     tshirt_status = "Partial Payment"
-                else:
-                    tshirt_status = "No T-shirt"
             row_data.append(tshirt_status)
         elif header.count("T-shirt Status") == 0:  # Write header if not a t-shirt department
             writer.writerow(header)
