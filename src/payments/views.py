@@ -118,7 +118,7 @@ def verify_payment(request, reference):
 
                 try:
                     pending_reg = PendingMomoPayment.objects.get(payment=payment)
-                    # Create student from pending registration
+                    # Create student from pending registration with t-shirt option
                     student = Student.objects.create(
                         ref_number=pending_reg.ref_number,
                         full_name=pending_reg.full_name,
@@ -128,6 +128,7 @@ def verify_payment(request, reference):
                         payment=payment,
                         year_group=pending_reg.year_group,
                         level=pending_reg.level,
+                        tshirt_option=request.session.get('registration_preview', {}).get('tshirt_option', 'none')  # Add this line
                     )
                     # Delete pending registration
                     pending_reg.delete()
@@ -374,3 +375,5 @@ def send_payment_confirmation(payment):
         recipient_list=[student.email],
         html_message=html_message,
     )
+
+

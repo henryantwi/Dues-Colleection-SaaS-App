@@ -1,4 +1,5 @@
 {% extends 'layouts/box.html' %}
+{% load custom_filters %}
 
 {% block title %}Student Details - {{ student.full_name }}{% endblock %}
 
@@ -65,6 +66,58 @@
                             <dt class="text-sm font-medium text-gray-500">Mobile Number</dt>
                             <dd class="mt-1 text-lg font-medium text-gray-900">{{ student.mobile }}</dd>
                         </div>
+                        <div class="glass-item p-4 rounded-lg">
+                            <dt class="text-sm font-medium text-gray-500">Payment Status</dt>
+                            <dd class="mt-1">
+                                {% if latest_payment %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium
+                                        {% if latest_payment.status == 'Successful' %}bg-green-100 text-green-800
+                                        {% elif latest_payment.status == 'Failed' %}bg-red-100 text-red-800
+                                        {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                        {{ latest_payment.status }}
+                                    </span>
+                                    <p class="mt-1 text-sm text-gray-600">Amount: GH₵{{ latest_payment.amount|floatformat:2 }}</p>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                        No Payment
+                                    </span>
+                                {% endif %}
+                            </dd>
+                        </div>
+
+                        {% if student.year_group == 1 and student.department.tshirt_included %}
+                        <div class="glass-item p-4 rounded-lg">
+                            <dt class="text-sm font-medium text-gray-500">T-shirt Status</dt>
+                            <dd class="mt-1">
+                                {% if student.tshirt_option == 'full' %}
+                                    <div class="flex items-center space-x-2">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                            Full Payment
+                                        </span>
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-600">Full T-shirt payment completed (GH₵{{ student.department.tshirt_price|floatformat:2 }})</p>
+                                {% elif student.tshirt_option == 'partial' %}
+                                    <div class="flex items-center space-x-2">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                            Partial Payment
+                                        </span>
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-600">
+                                        Partial payment made (GH₵{{ student.department.tshirt_price|divide:2|floatformat:2 }})
+                                        <br>
+                                        <span class="text-yellow-600">
+                                            Balance: GH₵{{ student.department.tshirt_price|divide:2|floatformat:2 }}
+                                        </span>
+                                    </p>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                        No T-shirt
+                                    </span>
+                                    <p class="mt-1 text-sm text-gray-600">Student did not opt for a T-shirt</p>
+                                {% endif %}
+                            </dd>
+                        </div>
+                        {% endif %}
                     </dl>
                 </div>
                 <div>

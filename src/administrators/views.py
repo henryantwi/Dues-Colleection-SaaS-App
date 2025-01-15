@@ -307,12 +307,33 @@ def download_students_csv(request):
             "Payment Status",
             "Payment Reference",
             "Amount Paid",
+            "T-shirt Status",  # Keep only T-shirt Status, remove T-shirt Option
             "Registration Date",
         ]
     )
 
     # Write data rows
     for student in students:
+        # Get payment status safely
+        payment_status = "No Payment"
+        payment_reference = "N/A"
+        payment_amount = "0.00"
+        
+        if hasattr(student, "payment") and student.payment:
+            payment_status = student.payment.status
+            payment_reference = student.payment.reference
+            payment_amount = student.payment.amount
+
+        # Get T-shirt status
+        tshirt_status = "N/A"
+        if student.year_group == 1 and student.department.tshirt_included:
+            if student.tshirt_option == 'full':
+                tshirt_status = "Full Payment"
+            elif student.tshirt_option == 'partial':
+                tshirt_status = "Partial Payment"
+            else:
+                tshirt_status = "No T-shirt"
+
         writer.writerow(
             [
                 student.ref_number,
@@ -320,9 +341,10 @@ def download_students_csv(request):
                 student.email,
                 student.department.name,
                 student.level,
-                student.payment.status if hasattr(student, "payment") else "No Payment",
-                student.payment.reference if hasattr(student, "payment") else "N/A",
-                student.payment.amount if hasattr(student, "payment") else "0.00",
+                payment_status,
+                payment_reference,
+                payment_amount,
+                tshirt_status,
                 student.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             ]
         )

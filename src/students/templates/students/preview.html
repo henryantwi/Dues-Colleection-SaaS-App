@@ -44,6 +44,14 @@
                             <span class="text-blue-100">Dues:</span>
                             <span class="text-2xl font-bold">GH₵{{ preview_data.dues_amount|floatformat:2 }}</span>
                         </div>
+                        
+                        {% if preview_data.tshirt_included and preview_data.tshirt_option != 'none' %}
+                        <div class="flex items-center gap-2">
+                            <span class="text-blue-100">T-shirt ({% if preview_data.tshirt_option == 'partial' %}Half {% endif %}Payment):</span>
+                            <span class="text-lg font-semibold">GH₵{{ preview_data.tshirt_amount|floatformat:2 }}</span>
+                        </div>
+                        {% endif %}
+
                         {% if preview_data.service_charge > 0 %}
                         <div class="flex items-center gap-2">
                             <span class="text-blue-100">Service Charge:</span>
@@ -105,6 +113,20 @@
                             {% endif %}
                         </dd>
                     </div>
+                    {% if preview_data.is_year_one and preview_data.tshirt_included %}
+                    <div class="space-y-2">
+                        <dt class="text-sm font-medium text-gray-500">T-shirt Option</dt>
+                        <dd class="text-lg text-gray-900">
+                            {% if preview_data.tshirt_option == 'full' %}
+                                Full T-shirt Payment
+                            {% elif preview_data.tshirt_option == 'partial' %}
+                                Partial T-shirt Payment
+                            {% else %}
+                                No T-shirt
+                            {% endif %}
+                        </dd>
+                    </div>
+                    {% endif %}
                 </dl>
             </div>
         </div>

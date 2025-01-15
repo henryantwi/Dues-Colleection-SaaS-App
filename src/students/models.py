@@ -34,6 +34,8 @@ class Department(models.Model):
     )
     service_charge = models.DecimalField(max_digits=10, decimal_places=2, default=2.50)
     is_active = models.BooleanField(default=True)
+    tshirt_included = models.BooleanField(default=False)
+    tshirt_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -75,6 +77,15 @@ class Student(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     level = models.IntegerField(default=100)
+    tshirt_option = models.CharField(
+        max_length=20,
+        choices=[
+            ('none', 'No T-shirt'),
+            ('full', 'Full T-shirt Payment'),
+            ('partial', 'Partial T-shirt Payment'),
+        ],
+        default='none'
+    )
 
     def save(self, *args, **kwargs):
         if not self.unique_code:

@@ -1,4 +1,5 @@
 {% extends 'layouts/student_box.html' %}
+{% load custom_filters %}
 
 {% block title %}Registration Confirmation{% endblock %}
 
@@ -105,6 +106,57 @@
                         <dt class="text-sm font-medium text-gray-500">Unique Code</dt>
                         <dd class="mt-1 text-sm font-mono bg-gray-50 px-2 py-1 rounded">{{ student.unique_code }}</dd>
                     </div>
+                    {% if student.year_group == 1 and student.department.tshirt_included %}
+                    <div class="col-span-1 sm:col-span-2 border-t border-gray-100 pt-4 mt-2">
+                        <dt class="text-sm font-medium text-gray-500">T-shirt Status</dt>
+                        <dd class="mt-2">
+                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                {% if student.tshirt_option == 'full' %}
+                                    <div class="flex items-center space-x-3 text-green-700">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span class="font-medium">Full T-shirt Payment Completed</span>
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-600">You can collect your T-shirt at the department office.</p>
+                                {% elif student.tshirt_option == 'partial' %}
+                                    <div class="flex items-center space-x-3 text-yellow-700">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span class="font-medium">Partial T-shirt Payment Made</span>
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-600">Complete the remaining payment at the department office to collect your T-shirt.</p>
+                                {% else %}
+                                    <div class="flex items-center space-x-3 text-gray-700">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                        <span class="font-medium">No T-shirt Selected</span>
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-600">You did not opt for a department T-shirt during registration.</p>
+                                {% endif %}
+
+                                {% if student.tshirt_option != 'none' %}
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-600">T-shirt Price:</span>
+                                        <span class="font-medium text-gray-900">
+                                            GH₵{{ student.department.tshirt_price|floatformat:2 }}
+                                            {% if student.tshirt_option == 'partial' %}
+                                                (GH₵{{ student.department.tshirt_price|divide:2|floatformat:2 }} paid)
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </dd>
+                    </div>
+                    {% endif %}
                 </dl>
             </div>
         </div>
