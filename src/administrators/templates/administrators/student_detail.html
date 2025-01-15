@@ -97,18 +97,35 @@
                                     </div>
                                     <p class="mt-1 text-sm text-gray-600">Full T-shirt payment completed (GH₵{{ student.department.tshirt_price|floatformat:2 }})</p>
                                 {% elif student.tshirt_option == 'partial' %}
-                                    <div class="flex items-center space-x-2">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                                            Partial Payment
-                                        </span>
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                                    Partial Payment
+                                                </span>
+                                            </div>
+                                            <p class="mt-1 text-sm text-gray-600">
+                                                Partial payment made (GH₵{{ student.department.tshirt_price|divide:2|floatformat:2 }})
+                                                <br>
+                                                <span class="text-yellow-600">
+                                                    Balance: GH₵{{ student.department.tshirt_price|divide:2|floatformat:2 }}
+                                                </span>
+                                            </p>
+                                        </div>
+                                        {% if user.is_superuser or user.departmentadmin.department == student.department %}
+                                        <div>
+                                            <form method="post" action="{% url 'administrators:update_tshirt_payment' student.ref_number %}"
+                                                  class="inline-block">
+                                                {% csrf_token %}
+                                                <button type="submit" 
+                                                        class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                                                        onclick="return confirm('Are you sure this student has completed the T-shirt payment?')">
+                                                    Mark as Fully Paid
+                                                </button>
+                                            </form>
+                                        </div>
+                                        {% endif %}
                                     </div>
-                                    <p class="mt-1 text-sm text-gray-600">
-                                        Partial payment made (GH₵{{ student.department.tshirt_price|divide:2|floatformat:2 }})
-                                        <br>
-                                        <span class="text-yellow-600">
-                                            Balance: GH₵{{ student.department.tshirt_price|divide:2|floatformat:2 }}
-                                        </span>
-                                    </p>
                                 {% else %}
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
                                         No T-shirt
@@ -198,7 +215,7 @@
                                                         class="inline-block">
                                                         {% csrf_token %}
                                                         <button type="submit" 
-                                                                class="glass-button text-xs px-3 py-1 hover:bg-blue-50"
+                                                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
                                                                 onclick="return confirm('Are you sure you want to mark this payment as successful?')">
                                                             Mark as Successful
                                                         </button>

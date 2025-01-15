@@ -349,3 +349,22 @@ def download_students_csv(request):
         writer.writerow(row_data)
 
     return response
+
+
+@login_required
+def update_tshirt_payment(request, ref_number):
+    student = get_object_or_404(Student, ref_number=ref_number)
+    
+    # Check if user has permission
+    if not request.user.is_superuser and request.user.department != student.department:
+        raise PermissionDenied
+    
+    # Verify this is a valid update case
+    if student.year_group == 1 and student.department.tshirt_included and student.tshirt_option == 'partial':
+        student.tshirt_option = 'full'
+        student.save()
+        messages.success(request, "T-shirt payment has been updated to full payment.")
+    else:
+        messages.error(request, "Invalid T-shirt payment update request.")
+    
+    return redirect('administrators:student_detail', ref_number=student.ref_number)
