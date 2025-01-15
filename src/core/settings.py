@@ -18,10 +18,10 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = [
         "dues-colleection-saas-app-j5s8.onrender.com"
-        "payments.acsessrid.com",
         # "dues-colleection-saas-app.onrender.com",
         "localhost",
         "127.0.0.1",
+        "payments.acsessrid.com",
         # "nesttop.tech",
         "dev-env.nesttop.tech",
     ]
