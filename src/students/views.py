@@ -11,7 +11,6 @@ from payments.models import Payment
 from .models import Department, PendingMomoPayment, Student
 
 
-
 def _clear_registration_session(request):
     """Helper function to clear all registration-related session data"""
     keys_to_clear = ["registration_preview", "registration_return_url"]
@@ -20,28 +19,33 @@ def _clear_registration_session(request):
 
 
 def calculate_total_amount(department, form_data, is_year_one, service_charge):
-    base_amount = float(department.year_one_amount if is_year_one else department.other_years_amount)
+    base_amount = float(
+        department.year_one_amount if is_year_one else department.other_years_amount
+    )
     total = base_amount + service_charge
-    
+
     if is_year_one and department.tshirt_included:
-        tshirt_option = form_data.get('tshirt_option')
-        if tshirt_option == 'full':
+        tshirt_option = form_data.get("tshirt_option")
+        if tshirt_option == "full":
             total += float(department.tshirt_price)
-        elif tshirt_option == 'partial':
+        elif tshirt_option == "partial":
             total += float(department.tshirt_price) / 2
-    
+        # No addition for 'none' option
+
     return total
 
+
 def calculate_tshirt_amount(department, tshirt_option):
-    if not department.tshirt_included or tshirt_option == 'none':
+    if not department.tshirt_included or tshirt_option == "none":
         return 0
-    
-    if tshirt_option == 'full':
+
+    if tshirt_option == "full":
         return float(department.tshirt_price)
-    elif tshirt_option == 'partial':
+    elif tshirt_option == "partial":
         return float(department.tshirt_price) / 2
-    
+
     return 0
+
 
 def student_registration(request, department_slug, is_year_one=False):
     department = get_object_or_404(Department, slug=department_slug, is_active=True)
@@ -63,9 +67,13 @@ def student_registration(request, department_slug, is_year_one=False):
             "mobile": request.POST.get("mobile"),
             "payment_method": request.POST.get("payment_method"),
             "level": request.POST.get("level") if not is_year_one else "100",
-            "tshirt_option": request.POST.get("tshirt_option") if is_year_one and department.tshirt_included else "none"
+            "tshirt_option": (
+                request.POST.get("tshirt_option")
+                if is_year_one and department.tshirt_included
+                else "none"
+            ),
         }
-        
+
         # if form_data["payment_method"] == "Cash":
         #     messages.error(
         #                 request,
@@ -152,8 +160,10 @@ def student_registration(request, department_slug, is_year_one=False):
             )
 
         # Calculate T-shirt amount
-        tshirt_amount = calculate_tshirt_amount(department, form_data['tshirt_option'])
-        total_amount = calculate_total_amount(department, form_data, is_year_one, SERVICE_CHARGE)
+        tshirt_amount = calculate_tshirt_amount(department, form_data["tshirt_option"])
+        total_amount = calculate_total_amount(
+            department, form_data, is_year_one, SERVICE_CHARGE
+        )
 
         # Store preview data in session
         preview_data = {
@@ -162,8 +172,14 @@ def student_registration(request, department_slug, is_year_one=False):
             "department_name": department.name,
             "is_year_one": is_year_one,
             "service_charge": SERVICE_CHARGE,
-            "dues_amount": float(department.year_one_amount if is_year_one else department.other_years_amount),
-            "tshirt_price": float(department.tshirt_price) if department.tshirt_included else 0,
+            "dues_amount": float(
+                department.year_one_amount
+                if is_year_one
+                else department.other_years_amount
+            ),
+            "tshirt_price": (
+                float(department.tshirt_price) if department.tshirt_included else 0
+            ),
             "tshirt_included": department.tshirt_included,
             "tshirt_amount": tshirt_amount,
             "amount": total_amount,
@@ -183,7 +199,9 @@ def student_registration(request, department_slug, is_year_one=False):
             "mobile": preview_data.get("mobile", ""),
             "payment_method": preview_data.get("payment_method", ""),
             "level": preview_data.get("level", ""),
-            "tshirt_option": preview_data.get("tshirt_option", "none"),  # Add this line
+            "tshirt_option": preview_data.get(
+                "tshirt_option", "full"
+            ),  # Change default to 'full'
         }
 
     return render(
@@ -199,8 +217,12 @@ def student_registration(request, department_slug, is_year_one=False):
                 else department.other_years_amount
             ),
             "tshirt_price": float(department.tshirt_price),
-            "tshirt_option": preview_data.get("tshirt_option", "none"),  # Add this line
-            "amount": calculate_total_amount(department, initial_data, is_year_one, SERVICE_CHARGE),  # Update to use initial_data
+            "tshirt_option": preview_data.get(
+                "tshirt_option", "full"
+            ),  # Change default to 'full'
+            "amount": calculate_total_amount(
+                department, initial_data, is_year_one, SERVICE_CHARGE
+            ),  # Update to use initial_data
             **initial_data,  # This will populate the form fields with previous data
         },
     )
@@ -217,18 +239,24 @@ def registration_preview(request):
         if "edit" in request.POST:
             # Get the return URL from the form
             return_url = request.POST.get("return_url")
-            
+
             # If no return URL, get department from preview data and redirect to registration
             if not return_url:
-                department = get_object_or_404(Department, id=preview_data["department_id"])
-                return redirect("students:registration", department_slug=department.slug)
-            
+                department = get_object_or_404(
+                    Department, id=preview_data["department_id"]
+                )
+                return redirect(
+                    "students:registration", department_slug=department.slug
+                )
+
             # Redirect to the stored return URL
             return redirect(return_url)
 
         elif "confirm" in request.POST:
             try:
-                department = get_object_or_404(Department, id=preview_data["department_id"])
+                department = get_object_or_404(
+                    Department, id=preview_data["department_id"]
+                )
                 payment = Payment.objects.create(
                     department=department,
                     method=preview_data["payment_method"],
@@ -236,7 +264,7 @@ def registration_preview(request):
                 )
 
                 if preview_data["payment_method"] == "Mobile Money":
-                    
+
                     try:
                         headers = {
                             "Authorization": f"Bearer {department.paystack_secret_key}",
@@ -265,15 +293,19 @@ def registration_preview(request):
                                 existing_pending = PendingMomoPayment.objects.filter(
                                     ref_number=preview_data["ref_number"]
                                 ).first()
-                                
+
                                 if existing_pending:
                                     # Update existing record with new payment
                                     existing_pending.payment = payment
-                                    existing_pending.full_name = preview_data["full_name"]
+                                    existing_pending.full_name = preview_data[
+                                        "full_name"
+                                    ]
                                     existing_pending.email = preview_data["email"]
                                     existing_pending.mobile = preview_data["mobile"]
                                     existing_pending.level = int(preview_data["level"])
-                                    existing_pending.year_group = 1 if preview_data["is_year_one"] else 2
+                                    existing_pending.year_group = (
+                                        1 if preview_data["is_year_one"] else 2
+                                    )
                                     existing_pending.save()
                                 else:
                                     # Create new pending payment record
@@ -284,26 +316,42 @@ def registration_preview(request):
                                         mobile=preview_data["mobile"],
                                         department=department,
                                         payment=payment,
-                                        year_group=1 if preview_data["is_year_one"] else 2,
+                                        year_group=(
+                                            1 if preview_data["is_year_one"] else 2
+                                        ),
                                         level=int(preview_data["level"]),
                                     )
 
                                 # Don't clear the session data yet - only store the payment reference
-                                request.session['pending_payment_ref'] = payment.reference
-                                return redirect(response_data["data"]["authorization_url"])
+                                request.session["pending_payment_ref"] = (
+                                    payment.reference
+                                )
+                                return redirect(
+                                    response_data["data"]["authorization_url"]
+                                )
 
                             except Exception as e:
                                 payment.status = "Failed"
                                 payment.save()
-                                messages.error(request, f"Error processing payment: {str(e)}")
-                                return render(request, "students/preview.html", 
-                                           {"preview_data": preview_data})
+                                messages.error(
+                                    request, f"Error processing payment: {str(e)}"
+                                )
+                                return render(
+                                    request,
+                                    "students/preview.html",
+                                    {"preview_data": preview_data},
+                                )
                     except Exception as e:
                         payment.status = "Failed"
                         payment.save()
-                        messages.error(request, f"Payment initialization error: {str(e)}")
-                        return render(request, "students/preview.html",
-                                    {"preview_data": preview_data})
+                        messages.error(
+                            request, f"Payment initialization error: {str(e)}"
+                        )
+                        return render(
+                            request,
+                            "students/preview.html",
+                            {"preview_data": preview_data},
+                        )
 
                 elif preview_data["payment_method"] == "Cash":
                     messages.error(
@@ -318,11 +366,12 @@ def registration_preview(request):
 
             except Exception as e:
                 messages.error(request, f"Error processing payment: {str(e)}")
-                return render(request, "students/preview.html", 
-                            {"preview_data": preview_data})
+                return render(
+                    request, "students/preview.html", {"preview_data": preview_data}
+                )
 
     # Check if there's a pending payment reference in session
-    pending_ref = request.session.get('pending_payment_ref')
+    pending_ref = request.session.get("pending_payment_ref")
     if pending_ref:
         try:
             # Check if payment was successful
@@ -330,13 +379,13 @@ def registration_preview(request):
             if payment.status == "Successful":
                 # Clear all session data if payment was successful
                 _clear_registration_session(request)
-                request.session.pop('pending_payment_ref', None)
+                request.session.pop("pending_payment_ref", None)
             elif payment.status == "Failed":
                 # Clear only the payment reference if failed
-                request.session.pop('pending_payment_ref', None)
+                request.session.pop("pending_payment_ref", None)
         except Payment.DoesNotExist:
             # Clear the payment reference if payment doesn't exist
-            request.session.pop('pending_payment_ref', None)
+            request.session.pop("pending_payment_ref", None)
 
     # Add the current path to the preview data
     preview_data["return_url"] = request.session.get("registration_return_url")

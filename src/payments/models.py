@@ -1,5 +1,5 @@
 import secrets
-import uuid
+from django.db.utils import IntegrityError
 
 from django.db import models
 from icecream import ic
@@ -31,9 +31,20 @@ class Payment(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.reference:
-            # Generate a unique payment reference
-            self.reference = f"PAY-{secrets.token_hex(5).upper()}"
-        super().save(*args, **kwargs)
+            # Ensure unique reference in case of collision
+            for _ in range(10):  # Limit retries to avoid infinite loop
+                try:
+                    self.reference = f"PAY-{secrets.token_hex(8).upper()}"
+                    super().save(*args, **kwargs)
+                    break
+                except IntegrityError:
+                    continue
+            else:
+                raise RuntimeError(
+                    "Failed to generate a unique payment reference after 10 attempts."
+                )
+        else:
+            super().save(*args, **kwargs)
 
     def get_student(self):
         """Get the first associated student or None"""

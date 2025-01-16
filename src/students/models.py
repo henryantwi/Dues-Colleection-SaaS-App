@@ -7,6 +7,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.text import slugify
 from django_resized import ResizedImageField
+from django.db.utils import IntegrityError
 
 image_storage = (
     MediaCloudinaryStorage()
@@ -80,16 +81,26 @@ class Student(models.Model):
     tshirt_option = models.CharField(
         max_length=20,
         choices=[
-            ('full', 'Full T-shirt Payment'),
-            ('partial', 'Partial T-shirt Payment'),
+            ("full", "Full T-shirt Payment"),
+            ("partial", "Partial T-shirt Payment"),
+            ("none", "No T-shirt"),  # Added this option
         ],
-        default='full'  # Changed default from 'none' to 'full'
+        default="none",  # Changed default to none
     )
 
     def save(self, *args, **kwargs):
         if not self.unique_code:
-            self.unique_code = str(uuid.uuid4()).upper()[:10]
-        super().save(*args, **kwargs)
+            for _ in range(5):  # Retry up to 5 times
+                self.unique_code = str(uuid.uuid4()).upper()[:10]
+                try:
+                    super().save(*args, **kwargs)
+                    break
+                except IntegrityError:
+                    continue
+            else:
+                raise RuntimeError("Failed to generate a unique code after 5 attempts.")
+        else:
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.full_name} - {self.ref_number}"
@@ -120,6 +131,7 @@ class PendingMomoPayment(models.Model):
     class Meta:
         verbose_name = "Pending Momo Payment"
         verbose_name_plural = "Pending Momo Payments"
+
     payment = models.OneToOneField("payments.Payment", on_delete=models.CASCADE)
 
     year_group = models.IntegerField(default=1)

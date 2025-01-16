@@ -223,16 +223,15 @@
     <div class="p-8 sm:p-6">
         <div class="space-y-6">
             <p class="text-gray-600">
-                As a first year student, you're required to have an association T-shirt. To make things flexible, we're offering the chance to make full payment for the T-shirt or part-payment. You'll later be allowed to pick your size and color. 
-                Select your preferred payment option:
+                As a first year student, you have the option to get a department T-shirt. You can choose to make a full payment, partial payment, or opt out.
+                Select your preferred option:
             </p>
             
-            <div class="grid gap-4 md:grid-cols-2">
+            <div class="grid gap-4 md:grid-cols-3">
                 <label class="relative block cursor-pointer">
                     <input type="radio" name="tshirt_option" value="full" 
                            class="peer sr-only" 
-                           checked
-                           {% if tshirt_option == 'full' %}checked{% endif %}
+                           {% if not tshirt_option or tshirt_option == 'full' %}checked{% endif %}
                            required>
                     <div class="rounded-lg border-2 border-gray-200 p-4 hover:border-blue-400 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200 h-full min-h-[160px]">
                         <div class="flex flex-col justify-between h-full">
@@ -273,6 +272,30 @@
                             </div>
                             <div class="mt-4 text-center bg-yellow-50 rounded-lg p-2">
                                 <span class="text-lg font-bold text-yellow-700">GH₵{{ department.tshirt_price|divide:2|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </label>
+
+                <label class="relative block cursor-pointer">
+                    <input type="radio" name="tshirt_option" value="none" 
+                           class="peer sr-only"
+                           {% if tshirt_option == 'none' %}checked{% endif %}>
+                    <div class="rounded-lg border-2 border-gray-200 p-4 hover:border-blue-400 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200 h-full min-h-[160px]">
+                        <div class="flex flex-col justify-between h-full">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-gray-900">No T-shirt</h3>
+                                    <p class="text-sm text-gray-500">Skip T-shirt</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-center bg-gray-50 rounded-lg p-2">
+                                <span class="text-lg font-bold text-gray-700">GH₵0.00</span>
                             </div>
                         </div>
                     </div>
@@ -418,6 +441,8 @@
 
             if (radio && radio.value === 'partial') {
                 total += tshirtPrice / 2;
+            } else if (radio && radio.value === 'none') {
+                total += 0;
             } else {
                 // Default to full price if no radio selected or if full payment selected
                 total += tshirtPrice;
