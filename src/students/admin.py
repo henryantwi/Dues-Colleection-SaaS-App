@@ -5,7 +5,8 @@ from .models import Department, PendingMomoPayment, Student
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ("name", "year_one_amount", "other_years_amount", "is_active", "service_charge", "tshirt_included", "tshirt_price")
+    # list_display = ("name", "year_one_amount", "other_years_amount", "is_active", "service_charge", "tshirt_included", "tshirt_price")
+    list_display = ("name", "year_one_amount", "other_years_amount", "is_active", "service_charge", "tshirt_included")
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ("name",)
     # list_editable = ["service_charge", "tshirt_included", "tshirt_price"]
