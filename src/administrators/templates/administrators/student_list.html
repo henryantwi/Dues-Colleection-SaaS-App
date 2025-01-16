@@ -114,6 +114,20 @@
                                                 Level {{ student.level }}
                                             </span>
                                         </span>
+                                        {% if student.year_group == 1 and student.department.tshirt_included %}
+                                        <span class="inline-flex items-center">
+                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h10M7 17h10M9 3v2m6-2v2M3 11h2m-2 6h2m16-6h-2m2 6h-2"/>
+                                            </svg>
+                                            {% if student.tshirt_option == 'full' %}
+                                                <span class="text-xs px-2 py-0.5 rounded-full bg-green-50 text-green-600">T-shirt Paid</span>
+                                            {% elif student.tshirt_option == 'partial' %}
+                                                <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-600">Partial T-shirt</span>
+                                            {% else %}
+                                                <span class="text-xs px-2 py-0.5 rounded-full bg-gray-50 text-gray-600">No T-shirt</span>
+                                            {% endif %}
+                                        </span>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <!-- Arrow Icon -->

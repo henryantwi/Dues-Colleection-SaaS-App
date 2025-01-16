@@ -33,7 +33,6 @@ CSRF_TRUSTED_ORIGINS = [
 
 
 INSTALLED_APPS = [
-    "django_extensions",
     "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -41,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
     "cloudinary_storage",
     "cloudinary",
     "administrators.apps.AdministratorsConfig",  # or just 'administrators'

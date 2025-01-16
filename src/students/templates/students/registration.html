@@ -68,7 +68,9 @@
                             <span class="text-blue-50">Total:</span>
                             <span class="text-3xl font-bold total-amount">
                                 {% if is_year_one and department.tshirt_included %}
-                                    GH₵{{ dues_amount|add:service_charge|add:department.tshirt_price|floatformat:2 }}
+                                    GH₵<script>
+                                document.write(({{ dues_amount }} + {{ service_charge }} + {{ department.tshirt_price }}).toFixed(2))
+                                </script>
                                 {% else %}
                                     GH₵{{ amount|floatformat:2 }}
                                 {% endif %}
