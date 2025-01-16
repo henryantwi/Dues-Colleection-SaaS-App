@@ -74,35 +74,6 @@ def student_registration(request, department_slug, is_year_one=False):
             ),
         }
 
-        # if form_data["payment_method"] == "Cash":
-        #     messages.error(
-        #                 request,
-        #                 "Cash payment method is currently unavailable. Please use Mobile Money.",
-        #             )
-        #     return render(
-        #         request,
-        #         "students/registration.html",
-        #         {
-        #             "department": department,
-        #             "is_year_one": is_year_one,
-        #             "service_charge": SERVICE_CHARGE,  # Add this line
-        #             "dues_amount": (  # Add this line
-        #                 department.year_one_amount
-        #                 if is_year_one
-        #                 else department.other_years_amount
-        #             ),
-        #             "amount": (  # Update this line
-        #                 float(
-        #                     department.year_one_amount
-        #                     if is_year_one
-        #                     else department.other_years_amount
-        #                 )
-        #                 + SERVICE_CHARGE
-        #             ),
-        #             **form_data,
-        #         },
-        #     )
-
         # Check if all fields are filled
         if not all(form_data.values()):
             messages.error(request, "All fields are required.")
@@ -354,15 +325,33 @@ def registration_preview(request):
                         )
 
                 elif preview_data["payment_method"] == "Cash":
-                    messages.error(
-                        request,
-                        "Cash payment method is currently unavailable. Please use Mobile Money.",
+                    # Create student record
+                    student = Student.objects.create(
+                        ref_number=preview_data["ref_number"],
+                        full_name=preview_data["full_name"],
+                        email=preview_data["email"],
+                        mobile=preview_data["mobile"],
+                        department=department,
+                        payment=payment,
+                        year_group=1 if preview_data["is_year_one"] else 2,
+                        level=int(preview_data["level"]),
+                        tshirt_option=preview_data.get("tshirt_option", "none")
                     )
-                    return render(
-                        request,
-                        "students/preview.html",
-                        {"preview_data": preview_data},
+                    
+                    # Mark payment as successful
+                    payment.status = "Pending"
+                    payment.save()
+                    
+                    # Clear all session data
+                    _clear_registration_session(request)
+                    
+                    # Add success message
+                    messages.warning(request,
+                        "Registration successful! Please proceed to the registration desk with your unique code to complete the process."
                     )
+                    
+                    # Redirect to confirmation page
+                    return redirect("students:registration_confirmation", student_uuid=student.uuid)
 
             except Exception as e:
                 messages.error(request, f"Error processing payment: {str(e)}")
@@ -393,8 +382,8 @@ def registration_preview(request):
     return render(request, "students/preview.html", {"preview_data": preview_data})
 
 
-def registration_confirmation(request, student_id):
-    student = get_object_or_404(Student, id=student_id)
+def registration_confirmation(request, student_uuid):
+    student = get_object_or_404(Student, uuid=student_uuid)
     return render(
         request, "students/registration_confirmation.html", {"student": student}
     )

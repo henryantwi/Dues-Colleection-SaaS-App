@@ -50,7 +50,14 @@ class Department(models.Model):
         verbose_name_plural = "Departments"
 
 
+import uuid
+from django.db import models
+from django.core.validators import RegexValidator
+
+
 class Student(models.Model):
+    id = models.AutoField(primary_key=True)  # Retain the auto-incrementing ID
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     full_name = models.CharField(max_length=200)
     ref_number = models.CharField(max_length=50, unique=True)
     email = models.EmailField()
@@ -64,7 +71,7 @@ class Student(models.Model):
         ],
     )
     department = models.ForeignKey(
-        Department, on_delete=models.CASCADE, related_name="students"
+        "students.Department", on_delete=models.CASCADE, related_name="students"
     )
     payment = models.ForeignKey(
         "payments.Payment",
@@ -83,30 +90,22 @@ class Student(models.Model):
         choices=[
             ("full", "Full T-shirt Payment"),
             ("partial", "Partial T-shirt Payment"),
-            ("none", "No T-shirt"),  # Added this option
+            ("none", "No T-shirt"),
         ],
-        default="none",  # Changed default to none
+        default="none",
     )
 
     def save(self, *args, **kwargs):
         if not self.unique_code:
-            for _ in range(5):  # Retry up to 5 times
-                self.unique_code = str(uuid.uuid4()).upper()[:10]
-                try:
-                    super().save(*args, **kwargs)
-                    break
-                except IntegrityError:
-                    continue
-            else:
-                raise RuntimeError("Failed to generate a unique code after 5 attempts.")
-        else:
-            super().save(*args, **kwargs)
+            self.unique_code = str(uuid.uuid4()).upper()[:10]
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.full_name} - {self.ref_number}"
 
     class Meta:
         ordering = ["-created_at"]
+
 
 
 class PendingMomoPayment(models.Model):

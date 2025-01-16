@@ -339,23 +339,23 @@
                             </label>
 
                             <!-- Cash Option -->
-                            <label class="relative block cursor-not-allowed opacity-60">
+                            <label class="relative block">
                                 <input type="radio" 
                                        name="payment_method" 
                                        value="Cash"
                                        class="peer sr-only"
-                                       disabled>
-                                <div class="rounded-lg border-2 border-gray-200 p-4 hover:border-gray-200 transition-all duration-200 h-full min-h-[120px]">
+                                       {% if payment_method == 'Cash' %}checked{% endif %}>
+                                <div class="rounded-lg border-2 border-gray-200 p-4 hover:border-blue-400 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200 h-full min-h-[120px]">
                                     <div class="flex items-center justify-between h-full">
                                         <div class="flex items-center space-x-4">
-                                            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                                                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
                                                 </svg>
                                             </div>
                                             <div>
                                                 <h3 class="font-medium text-gray-900">Cash</h3>
-                                                <p class="text-sm text-gray-500">Currently unavailable</p>
+                                                <p class="text-sm text-gray-500">Pay with cash in person</p>
                                             </div>
                                         </div>
                                         <div class="radio-circle"></div>

@@ -139,7 +139,7 @@ def verify_payment(request, reference):
                     request.session.pop('pending_payment_ref', None)
                     
                     return redirect(
-                        "students:registration_confirmation", student_id=student.id
+                        "students:registration_confirmation", student_uuid=student.uuid
                     )
                 except PendingMomoPayment.DoesNotExist:
                     messages.error(request, "Pending registration not found.")
