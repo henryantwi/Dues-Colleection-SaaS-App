@@ -71,7 +71,12 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             <span class="text-gray-600">First Year:</span>
-                            <span class="font-bold text-gray-900">GH₵{{ department.year_one_amount }}</span>
+                            <span class="font-bold text-gray-900">
+                                GH₵{{ department.year_one_amount|add:department.tshirt_price|floatformat:2 }}
+                                {% if department.tshirt_included %}
+                                    <span class="text-xs text-gray-500">(includes T-shirt)</span>
+                                {% endif %}
+                            </span>
                         </div>
                         <div class="flex items-center gap-3 text-sm">
                             <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
