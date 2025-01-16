@@ -1,0 +1,272 @@
+/* Custom styles for modern design */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7fafc;
+    color: #2d3748;
+}
+
+a {
+    color: #3182ce;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #2b6cb0;
+}
+
+button {
+    transition: transform 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.alert {
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.alert-enter-active, .alert-leave-active {
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.alert-enter, .alert-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.bg-gray-100 {
+    background-color: #f7fafc;
+}
+
+.bg-white {
+    background-color: #ffffff;
+}
+
+.bg-opacity-70 {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.backdrop-blur-md {
+    backdrop-filter: blur(10px);
+}
+
+.text-gray-800 {
+    color: #2d3748;
+}
+
+/* Modern utility classes */
+.nav-link {
+    @apply px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 
+    transition-all duration-200 font-medium;
+}
+
+.dropdown-item {
+    @apply flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 
+    transition-colors duration-200;
+}
+
+/* Reusable animations */
+@keyframes slideUpAndFade {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0.95);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+@keyframes wave {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+/* Modern glass morphism and animation utilities */
+.glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.shine-effect {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.2),
+        transparent
+    );
+    background-size: 200% 100%;
+    animation: shine 4s infinite linear;
+}
+
+.hover-glass {
+    position: relative;
+    overflow: hidden;
+}
+
+.hover-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.hover-glass:hover::before {
+    left: 100%;
+}
+
+/* Interactive states */
+.interactive-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
+}
+
+.animate-wave {
+    animation: wave 6s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite linear;
+}
+
+/* Glass morphism effects */
+.glass {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20;
+}
+
+.glass-light {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 
+    hover:bg-white/10 transition-colors duration-300;
+}
+
+.glass-dark {
+    @apply bg-surface/50 backdrop-blur-md border border-white/5
+    hover:bg-surface/70 transition-colors duration-300;
+}
+
+/* Modern form elements */
+.form-group {
+    @apply space-y-2 mb-6;
+}
+
+.form-label {
+    @apply block text-sm font-medium text-slate-700;
+}
+
+.form-input {
+    @apply input;
+}
+
+.input-neo {
+    @apply bg-neutral/30 border border-white/10 rounded-xl px-4 py-3
+    focus:ring-2 focus:ring-primary/20 focus:border-primary/50
+    transition-all duration-200;
+}
+
+/* Accessibility improvements */
+.visually-hidden {
+    @apply sr-only;
+}
+
+/* Responsive utilities */
+.responsive-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* Interactive elements */
+.hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg
+    hover:shadow-primary/20;
+}
+
+/* Form elements */
+.form-group {
+    @apply space-y-2 mb-6;
+}
+
+.form-label {
+    @apply text-sm font-medium text-white/70;
+}
+
+/* Animation utilities */
+.transition-gpu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
