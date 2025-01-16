@@ -15,8 +15,6 @@ class DepartmentAdmin(admin.ModelAdmin):
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
-        "uuid",
         "full_name",
         "ref_number",
         "department",
