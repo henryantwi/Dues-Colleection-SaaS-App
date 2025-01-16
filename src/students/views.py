@@ -345,10 +345,10 @@ def registration_preview(request):
                     # Clear all session data
                     _clear_registration_session(request)
                     
-                    # Add success message
-                    messages.warning(request,
-                        "Registration successful! Please proceed to the registration desk with your unique code to complete the process."
-                    )
+                    # # Add success message
+                    # messages.warning(request,
+                    #     "Registration successful! Please proceed to the registration desk with your unique code to complete the process."
+                    # )
                     
                     # Redirect to confirmation page
                     return redirect("students:registration_confirmation", student_uuid=student.uuid)
