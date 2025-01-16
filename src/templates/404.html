@@ -1,21 +1,37 @@
 {% extends 'layouts/blank.html' %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center">
-    <div class="glass-card max-w-lg mx-auto p-8 text-center">
-        <div class="w-24 h-24 mx-auto mb-6 bg-red-50 rounded-full flex items-center justify-center">
-            <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+    <div class="glass-card max-w-xl mx-auto p-12 rounded-2xl shadow-xl backdrop-blur-sm">
+        <div class="relative">
+            <!-- Large 404 background number -->
+            <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 text-9xl font-bold text-gray-100 select-none">
+                404
+            </div>
+            
+            <!-- Main content -->
+            <div class="relative z-10 text-center">
+                <div class="w-32 h-32 mx-auto mb-8 bg-red-50 rounded-full flex items-center justify-center transform hover:rotate-12 transition-transform duration-300">
+                    <svg class="w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                
+                <h1 class="text-5xl font-bold mb-6 gradient-text">Oops! Page Not Found</h1>
+                <p class="text-gray-600 text-lg mb-10">
+                    Looks like you've ventured into unknown territory.<br>
+                    The page you're looking for has vanished into the digital void.
+                </p>
+                
+                <a href="/" class="glass-button px-8 py-4 rounded-full bg-gradient-to-r from-primary to-accent text-white
+                    hover:from-primary-hover hover:to-accent transform hover:scale-105 transition-all duration-300 inline-flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    Back to Home
+                </a>
+            </div>
         </div>
-        <h1 class="text-4xl font-bold mb-4 gradient-text">Page Not Found</h1>
-        <p class="text-gray-600 mb-8">
-            The page you're looking for doesn't exist or is unavailable.
-        </p>
-        <a href="/" class="glass-button bg-gradient-to-r from-primary to-accent text-white
-        hover:from-primary-hover hover:to-accent inline-block">
-            Return Home
-        </a>
     </div>
 </div>
 {% endblock %}
