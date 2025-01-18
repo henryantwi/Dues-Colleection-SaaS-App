@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "cloudinary_storage",
     "cloudinary",
-    "administrators.apps.AdministratorsConfig",  # or just 'administrators'
+    "administrators.apps.AdministratorsConfig",
     "a_home",
     "students",
     "payments",
@@ -84,7 +84,7 @@ DATABASES = {
     }
 }
 
-if ENVIRONMENT == "production" or POSTGRES_LOCALLY is True:
+if ENVIRONMENT == "production" or ENVIRONMENT == "stagging" or POSTGRES_LOCALLY is True:
     DATABASES["default"] = dj_database_url.parse(config("DATABASE_URL"))
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -125,7 +125,7 @@ else:
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 # Serve static files during development with cloudinary
-if ENVIRONMENT == "production":
+if ENVIRONMENT == "production" or ENVIRONMENT == "stagging":
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 else:
     STATICFILES_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
@@ -152,7 +152,7 @@ AUTHENTICATION_BACKENDS = [
 
 # Session Settings
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
-SESSION_COOKIE_AGE = 3600  # 1 hour in seconds
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Add after AUTHENTICATION_BACKENDS
@@ -177,7 +177,7 @@ if ENVIRONMENT == "production":
     CONTACT_EMAIL_1 = config("CONTACT_EMAIL_1")
     CONTACT_EMAIL_2 = config("CONTACT_EMAIL_2")
     CONTACT_EMAIL_3 = config("CONTACT_EMAIL_3")
-else:  # Default to console backend for other environments
+else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     EMAIL_HOST_USER = "test@example.com"
     DEFAULT_FROM_EMAIL = "DuesFlow <test@example.com>"

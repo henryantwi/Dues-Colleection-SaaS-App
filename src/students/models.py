@@ -7,7 +7,6 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.text import slugify
 from django_resized import ResizedImageField
-from django.db.utils import IntegrityError
 
 image_storage = (
     MediaCloudinaryStorage()
@@ -22,9 +21,6 @@ class Department(models.Model):
     full_name = models.CharField(max_length=200, unique=True, blank=True, null=True)
     year_one_amount = models.DecimalField(max_digits=10, decimal_places=2)
     other_years_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    # paystack_secret_key = models.CharField(max_length=200)
-    # paystack_public_key = models.CharField(max_length=200)
-    # google_app_password = models.CharField(max_length=200)
     image = ResizedImageField(
         size=[600, 600],
         quality=100,
@@ -48,11 +44,6 @@ class Department(models.Model):
 
     class Meta:
         verbose_name_plural = "Departments"
-
-
-import uuid
-from django.db import models
-from django.core.validators import RegexValidator
 
 
 class Student(models.Model):
@@ -107,7 +98,6 @@ class Student(models.Model):
         ordering = ["-created_at"]
 
 
-
 class PendingMomoPayment(models.Model):
     ref_number = models.CharField(max_length=20, unique=True)
     full_name = models.CharField(max_length=255)
@@ -117,7 +107,7 @@ class PendingMomoPayment(models.Model):
         validators=[
             RegexValidator(
                 regex=r"^\d{10,15}$",
-                message="Phone number must be between 10 and 15 digits.",
+                message="Phone number must be 10 digits(eg. 0200283727).",
             )
         ],
     )

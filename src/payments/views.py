@@ -128,16 +128,17 @@ def verify_payment(request, reference):
                         payment=payment,
                         year_group=pending_reg.year_group,
                         level=pending_reg.level,
-                        tshirt_option=request.session.get('registration_preview', {}).get('tshirt_option', 'none')  # Add this line
+                        tshirt_option=request.session.get('registration_preview', {}).get('tshirt_option', 'none')
+                        # Add this line
                     )
                     # Delete pending registration
                     pending_reg.delete()
-                    
+
                     # Clear all session data after successful payment
                     request.session.pop('registration_preview', None)
                     request.session.pop('registration_return_url', None)
                     request.session.pop('pending_payment_ref', None)
-                    
+
                     return redirect(
                         "students:registration_confirmation", student_uuid=student.uuid
                     )
@@ -153,6 +154,7 @@ def verify_payment(request, reference):
 
     return redirect("home")
 
+
 @login_required
 def mark_payment_as_paid(request, reference):
     user_profile = request.user.profile
@@ -162,8 +164,8 @@ def mark_payment_as_paid(request, reference):
         raise PermissionDenied
 
     if (
-        user_profile.is_department_admin
-        and payment.department != user_profile.department
+            user_profile.is_department_admin
+            and payment.department != user_profile.department
     ):
         raise PermissionDenied
 
@@ -375,5 +377,3 @@ def send_payment_confirmation(payment):
         recipient_list=[student.email],
         html_message=html_message,
     )
-
-

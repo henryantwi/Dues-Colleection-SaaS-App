@@ -173,7 +173,7 @@ def student_registration(request, department_slug, is_year_one=False):
             "level": preview_data.get("level", ""),
             "tshirt_option": preview_data.get(
                 "tshirt_option", "full"
-            ),  # Change default to 'full'
+            ),
         }
 
     return render(
@@ -182,8 +182,8 @@ def student_registration(request, department_slug, is_year_one=False):
         {
             "department": department,
             "is_year_one": is_year_one,
-            "service_charge": SERVICE_CHARGE,  # Add this line
-            "dues_amount": (  # Add this line
+            "service_charge": SERVICE_CHARGE,
+            "dues_amount": (
                 department.year_one_amount
                 if is_year_one
                 else department.other_years_amount
@@ -191,7 +191,7 @@ def student_registration(request, department_slug, is_year_one=False):
             "tshirt_price": float(department.tshirt_price),
             "tshirt_option": preview_data.get(
                 "tshirt_option", "full"
-            ),  # Change default to 'full'
+            ),
             "amount": calculate_total_amount(
                 department, initial_data, is_year_one, SERVICE_CHARGE
             ),  # Update to use initial_data
