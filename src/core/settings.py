@@ -270,7 +270,15 @@ JAZZMIN_SETTINGS = {
     # Cards
     "show_ui_builder": False,
     # Related Modal
-    "related_modal_active": True,
+    "related_modal_active": False,  # Change this to False
+    # Show foreign keys as raw ID fields
+    "show_foreign_keys": True,
+    # Change foreign key representation
+    "foreign_keys_format": "raw_id",
+    # Add base URL for links
+    "site_url": "/",
+    # Configure changeform template
+    "changeform_format": "horizontal_tabs",
     # Custom Links
     "custom_links": {
         "students": [
