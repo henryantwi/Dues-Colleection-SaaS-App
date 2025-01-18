@@ -16,19 +16,9 @@ DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = [
-        "dues-colleection-saas-app-j5s8.onrender.com" # production
-        "dues-colleection-saas-app.onrender.com", # stagging
-        "localhost",
-        "127.0.0.1",
-        "payments.acsessrid.com",
-        "dev-env.nesttop.tech", # local dev
-        "stagging-env.nesttop.tech", # stagging
-    ]
+    ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=lambda v: v.split(","))
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://dev-env.nesttop.tech",
-]
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=lambda v: v.split(","))
 
 
 
