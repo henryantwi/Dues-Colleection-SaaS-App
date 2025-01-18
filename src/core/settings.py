@@ -13,6 +13,8 @@ POSTGRES_LOCALLY = config("POSTGRES_LOCALLY", default=False, cast=bool)
 
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 
+PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY")
+
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:

@@ -1,6 +1,7 @@
 import json
 
 import requests
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -238,7 +239,7 @@ def registration_preview(request):
 
                     try:
                         headers = {
-                            "Authorization": f"Bearer {department.paystack_secret_key}",
+                            "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
                             "Content-Type": "application/json",
                         }
                         data = {

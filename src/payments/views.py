@@ -47,7 +47,7 @@ def create_payment(request, student_id):
                 # Initialize Paystack payment
                 try:
                     headers = {
-                        "Authorization": f"Bearer {department.paystack_secret_key}",
+                        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
                         "Content-Type": "application/json",
                     }
                     data = {
@@ -105,7 +105,7 @@ def verify_payment(request, reference):
 
     # Verify with Paystack API
     try:
-        headers = {"Authorization": f"Bearer {payment.department.paystack_secret_key}"}
+        headers = {"Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}"}
         response = requests.get(
             f"https://api.paystack.co/transaction/verify/{reference}", headers=headers
         )
@@ -304,7 +304,7 @@ def create_admin_payment(request):
             # For Mobile Money, redirect to Paystack
             try:
                 headers = {
-                    "Authorization": f"Bearer {department.paystack_secret_key}",
+                    "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
                     "Content-Type": "application/json",
                 }
                 data = {

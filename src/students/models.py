@@ -22,9 +22,9 @@ class Department(models.Model):
     full_name = models.CharField(max_length=200, unique=True, blank=True, null=True)
     year_one_amount = models.DecimalField(max_digits=10, decimal_places=2)
     other_years_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    paystack_secret_key = models.CharField(max_length=200)
-    paystack_public_key = models.CharField(max_length=200)
-    google_app_password = models.CharField(max_length=200)
+    # paystack_secret_key = models.CharField(max_length=200)
+    # paystack_public_key = models.CharField(max_length=200)
+    # google_app_password = models.CharField(max_length=200)
     image = ResizedImageField(
         size=[600, 600],
         quality=100,
