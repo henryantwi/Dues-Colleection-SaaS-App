@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from icecream import ic
+from .sms_client import send_sms_get
 
 from payments.models import Payment
 from students.models import Student
@@ -216,6 +217,7 @@ def student_detail(request, ref_number):
 @login_required
 def mark_payment_successful(request, payment_ref):
     payment = get_object_or_404(Payment, reference=payment_ref)
+    student = get_object_or_404(Student, payment=payment)
 
     # Check permissions
     if not request.user.is_superuser:
@@ -232,6 +234,21 @@ def mark_payment_successful(request, payment_ref):
     if payment.status == "Pending":
         payment.status = "Successful"
         payment.save()
+        number = f"233{student.mobile[1:]}"
+        try:
+            first_name = student.full_name.split()[0]
+            message = (
+            f"Dear {first_name}, your payment (Ref: {payment.reference}) "
+            f"has been successfully confirmed. Thank you for your payment."
+            )
+        except (AttributeError, IndexError):
+            message = (
+            f"Dear Student, your payment (Ref: {payment.reference}) "
+            f"has been successfully confirmed. Thank you for your payment."
+            )
+        if payment.method == "Cash":
+            message += " (Cash Payment)"
+        send_sms_get([number], message)
         messages.success(request, "Payment has been marked as successful.")
     else:
         messages.error(request, "This payment cannot be modified.")
@@ -363,6 +380,22 @@ def update_tshirt_payment(request, ref_number):
     if student.year_group == 1 and student.department.tshirt_included and student.tshirt_option == 'partial':
         student.tshirt_option = 'full'
         student.save()
+        number = f"233{student.mobile[1:]}"
+        try:
+            first_name = student.full_name.split()[0]
+            message = (
+            f"Dear {first_name}, your T-shirt payment has been successfully "
+            "updated to full payment. You can now collect your T-shirt. Thank you!"
+            )
+        except (AttributeError, IndexError):
+            message = (
+            "Dear Student, your T-shirt payment has been successfully "
+            "updated to full payment. You can now collect your T-shirt. Thank you!"
+            )
+        try:
+            send_sms_get([number], message)
+        except Exception as e:
+            messages.warning(request, f"Payment updated but SMS notification failed: {str(e)}")
         messages.success(request, "T-shirt payment has been updated to full payment.")
     else:
         messages.error(request, "Invalid T-shirt payment update request.")

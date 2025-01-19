@@ -13,7 +13,6 @@ POSTGRES_LOCALLY = config("POSTGRES_LOCALLY", default=False, cast=bool)
 
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 
-PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY")
 
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
@@ -21,8 +20,6 @@ else:
     ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=lambda v: v.split(","))
 
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=lambda v: v.split(","))
-
-
 
 INSTALLED_APPS = [
     "jazzmin",
@@ -325,3 +322,9 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success",
     },
 }
+
+PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY")
+
+DEYWURO_USERNAME = config("DEYWURO_USERNAME")
+DEYWURO_PASSWORD = config("DEYWURO_PASSWORD")
+DEYWURO_SOURCE = config("DEYWURO_SOURCE")
