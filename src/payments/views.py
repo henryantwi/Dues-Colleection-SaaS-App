@@ -129,7 +129,6 @@ def verify_payment(request, reference):
                         year_group=pending_reg.year_group,
                         level=pending_reg.level,
                         tshirt_option=request.session.get('registration_preview', {}).get('tshirt_option', 'none')
-                        # Add this line
                     )
                     # Delete pending registration
                     pending_reg.delete()

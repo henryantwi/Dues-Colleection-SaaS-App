@@ -103,8 +103,8 @@
                         <dd class="mt-1 text-sm text-gray-900">{{ student.department.name }}</dd>
                     </div>
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Unique Code</dt>
-                        <dd class="mt-1 text-sm font-mono bg-gray-50 px-2 py-1 rounded">{{ student.unique_code }}</dd>
+                        <dt class="text-sm font-medium text-gray-500">Payment Reference</dt>
+                        <dd class="mt-1 text-sm font-mono bg-gray-50 px-2 py-1 rounded">{{ student.payment.reference }}</dd>
                     </div>
                     {% if student.year_group == 1 and student.department.tshirt_included %}
                     <div class="col-span-1 sm:col-span-2 border-t border-gray-100 pt-4 mt-2">
