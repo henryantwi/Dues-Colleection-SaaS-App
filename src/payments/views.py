@@ -16,6 +16,8 @@ from students.models import PendingMomoPayment, Student
 from .forms import PaymentForm
 from .models import Payment
 
+from django.core.mail import send_mail
+
 ic.disable()
 
 
@@ -94,7 +96,7 @@ def create_payment(request, student_id):
     )
 
 
-# @csrf_exempt
+@csrf_exempt
 def verify_payment(request, reference):
     # Get payment record
     try:
@@ -128,16 +130,18 @@ def verify_payment(request, reference):
                         payment=payment,
                         year_group=pending_reg.year_group,
                         level=pending_reg.level,
-                        tshirt_option=request.session.get('registration_preview', {}).get('tshirt_option', 'none')
+                        tshirt_option=request.session.get(
+                            "registration_preview", {}
+                        ).get("tshirt_option", "none"),
                         # Add this line
                     )
                     # Delete pending registration
                     pending_reg.delete()
 
                     # Clear all session data after successful payment
-                    request.session.pop('registration_preview', None)
-                    request.session.pop('registration_return_url', None)
-                    request.session.pop('pending_payment_ref', None)
+                    request.session.pop("registration_preview", None)
+                    request.session.pop("registration_return_url", None)
+                    request.session.pop("pending_payment_ref", None)
 
                     return redirect(
                         "students:registration_confirmation", student_uuid=student.uuid
@@ -149,6 +153,12 @@ def verify_payment(request, reference):
     except Exception as e:
         payment.status = "Failed"
         payment.save()
+        send_mail(
+            subject="Payment Verification Failed",
+            message=f"An error occurred while verifying payment with reference {reference}: {str(e)}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=["henryantwi191@gmail.com"],
+        )
         messages.error(request, f"Error verifying payment: {str(e)}")
         return redirect("payments:payment_failed", reference=reference)
 
@@ -164,8 +174,8 @@ def mark_payment_as_paid(request, reference):
         raise PermissionDenied
 
     if (
-            user_profile.is_department_admin
-            and payment.department != user_profile.department
+        user_profile.is_department_admin
+        and payment.department != user_profile.department
     ):
         raise PermissionDenied
 

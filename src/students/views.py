@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from icecream import ic
 
+from django.core.mail import send_mail
+
 from payments.models import Payment
 
 from .models import Department, PendingMomoPayment, Student
@@ -171,9 +173,7 @@ def student_registration(request, department_slug, is_year_one=False):
             "mobile": preview_data.get("mobile", ""),
             "payment_method": preview_data.get("payment_method", ""),
             "level": preview_data.get("level", ""),
-            "tshirt_option": preview_data.get(
-                "tshirt_option", "full"
-            ),
+            "tshirt_option": preview_data.get("tshirt_option", "full"),
         }
 
     return render(
@@ -189,9 +189,7 @@ def student_registration(request, department_slug, is_year_one=False):
                 else department.other_years_amount
             ),
             "tshirt_price": float(department.tshirt_price),
-            "tshirt_option": preview_data.get(
-                "tshirt_option", "full"
-            ),
+            "tshirt_option": preview_data.get("tshirt_option", "full"),
             "amount": calculate_total_amount(
                 department, initial_data, is_year_one, SERVICE_CHARGE
             ),  # Update to use initial_data
@@ -244,7 +242,7 @@ def registration_preview(request):
                         }
                         data = {
                             "email": preview_data["email"],
-                            "amount": int(preview_data["amount"] * 100),
+                            "amount": int(float(preview_data["amount"]) * 100),
                             "callback_url": request.build_absolute_uri(
                                 reverse(
                                     "payments:verify_payment", args=[payment.reference]
@@ -252,6 +250,7 @@ def registration_preview(request):
                             ),
                             "reference": payment.reference,
                         }
+                        print(data["callback_url"])
                         response = requests.post(
                             "https://api.paystack.co/transaction/initialize",
                             headers=headers,
@@ -298,6 +297,7 @@ def registration_preview(request):
                                 request.session["pending_payment_ref"] = (
                                     payment.reference
                                 )
+                                print(response_data["data"]["authorization_url"])
                                 return redirect(
                                     response_data["data"]["authorization_url"]
                                 )
@@ -305,6 +305,12 @@ def registration_preview(request):
                             except Exception as e:
                                 payment.status = "Failed"
                                 payment.save()
+                                send_mail(
+                                    subject="Payment Verification Failed",
+                                    message=f"An error occurred while sending payment with: {str(e)}",
+                                    from_email=settings.DEFAULT_FROM_EMAIL,
+                                    recipient_list=["henryantwi191@gmail.com"],
+                                )
                                 messages.error(
                                     request, f"Error processing payment: {str(e)}"
                                 )
@@ -316,6 +322,12 @@ def registration_preview(request):
                     except Exception as e:
                         payment.status = "Failed"
                         payment.save()
+                        send_mail(
+                            subject="Payment Verification Failed",
+                            message=f"An error occurred while verifying payment with reference {reference}: {str(e)}",
+                            from_email=settings.DEFAULT_FROM_EMAIL,
+                            recipient_list=["henryantwi191@gmail.com"],
+                        )
                         messages.error(
                             request, f"Payment initialization error: {str(e)}"
                         )
@@ -336,23 +348,25 @@ def registration_preview(request):
                         payment=payment,
                         year_group=1 if preview_data["is_year_one"] else 2,
                         level=int(preview_data["level"]),
-                        tshirt_option=preview_data.get("tshirt_option", "none")
+                        tshirt_option=preview_data.get("tshirt_option", "none"),
                     )
-                    
+
                     # Mark payment as successful
                     payment.status = "Pending"
                     payment.save()
-                    
+
                     # Clear all session data
                     _clear_registration_session(request)
-                    
+
                     # # Add success message
                     # messages.warning(request,
                     #     "Registration successful! Please proceed to the registration desk with your unique code to complete the process."
                     # )
-                    
+
                     # Redirect to confirmation page
-                    return redirect("students:registration_confirmation", student_uuid=student.uuid)
+                    return redirect(
+                        "students:registration_confirmation", student_uuid=student.uuid
+                    )
 
             except Exception as e:
                 messages.error(request, f"Error processing payment: {str(e)}")
