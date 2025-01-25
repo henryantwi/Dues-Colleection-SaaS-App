@@ -70,8 +70,9 @@
                 </div>
             </div>
 
-            <!-- Similar styling for other statistics cards -->
-            <div class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300">
+            <!-- Total Students Card -->
+            <a href="{% url 'administrators:filtered_students' filter_type='all' %}" 
+               class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 p-3 rounded-xl bg-blue-100">
                         <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,8 +86,11 @@
                         </dl>
                     </div>
                 </div>
-            </div>
-            <div class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300">
+            </a>
+
+            <!-- Paid Students Card -->
+            <a href="{% url 'administrators:filtered_students' filter_type='paid' %}"
+               class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 p-3 rounded-xl bg-blue-100">
                         <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,8 +104,11 @@
                         </dl>
                     </div>
                 </div>
-            </div>
-            <div class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300">
+            </a>
+
+            <!-- Pending Payments Card -->
+            <a href="{% url 'administrators:filtered_students' filter_type='pending' %}"
+               class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 p-3 rounded-xl bg-blue-100">
                         <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,7 +122,7 @@
                         </dl>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Layout for all screen sizes -->

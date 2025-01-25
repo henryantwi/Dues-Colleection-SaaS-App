@@ -14,8 +14,9 @@ urlpatterns = [
          views.mark_payment_successful, 
          name='mark_payment_successful'),
     path('students/', views.student_list, name='student_list'),
-    path('students/download/', views.download_students_csv, name='download_students'),
+    path('students/download/', views.download_students_excel, name='download_students'),
     path('student/<str:ref_number>/update-tshirt/', 
          views.update_tshirt_payment, 
          name='update_tshirt_payment'),
+    path('students/<str:filter_type>/', views.filtered_student_list, name='filtered_students'),
 ]

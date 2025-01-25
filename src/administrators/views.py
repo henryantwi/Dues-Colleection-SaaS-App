@@ -12,6 +12,9 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from icecream import ic
 from .sms_client import send_sms_get
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+
 
 from payments.models import Payment
 from students.models import Student
@@ -295,12 +298,13 @@ def student_list(request):
 
 
 @login_required
-def download_students_csv(request):
-    response = HttpResponse(
-        content_type="text/csv",
-        headers={"Content-Disposition": 'attachment; filename="students.csv"'},
-    )
+def download_students_excel(request):
+    # Create a workbook and active sheet
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "Students"
 
+    # Query students based on the user type
     if request.user.is_superuser:
         students = Student.objects.select_related("department", "payment").all()
     else:
@@ -309,8 +313,7 @@ def download_students_csv(request):
             department=department
         )
 
-    writer = csv.writer(response)
-    # Create base header list
+    # Base header
     header = [
         "Reference Number",
         "Full Name",
@@ -324,18 +327,30 @@ def download_students_csv(request):
         "Registration Date",
     ]
 
-    # Write data rows
-    for student in students:
+    # Check if T-shirt status should be included
+    include_tshirt_status = any(student.department.tshirt_included for student in students)
+
+    # Add "T-shirt Status" to the header if needed
+    if include_tshirt_status:
+        header.append("T-shirt Status")
+
+    # Write the header row
+    for col_num, column_title in enumerate(header, 1):
+        sheet.cell(row=1, column=col_num, value=column_title)
+
+    # Write student data rows
+    for row_num, student in enumerate(students, start=2):
         payment_status = "No Payment"
         payment_reference = "N/A"
         payment_amount = "0.00"
-        
+
+        # Payment details if available
         if hasattr(student, "payment") and student.payment:
             payment_status = student.payment.status
             payment_reference = student.payment.reference
             payment_amount = student.payment.amount
 
-        # Create base row data
+        # Base row data
         row_data = [
             student.ref_number,
             student.full_name,
@@ -349,23 +364,32 @@ def download_students_csv(request):
             student.created_at.strftime("%Y-%m-%d %H:%M:%S"),
         ]
 
-        # Add T-shirt status if department has t-shirt option
-        if student.department.tshirt_included:
-            if not header[-1] == "T-shirt Status":  # Add header if not already added
-                header.append("T-shirt Status")
-                writer.writerow(header)
-
+        # Add T-shirt status if applicable
+        if include_tshirt_status:
             tshirt_status = "N/A"
-            if student.year_group == 1:
-                if student.tshirt_option == 'full':
-                    tshirt_status = "Full Payment"
-                else:  # partial is the only other option now
-                    tshirt_status = "Partial Payment"
+            if student.department.tshirt_included:
+                if student.year_group == 1:
+                    if student.tshirt_option == "full":
+                        tshirt_status = "Full Payment"
+                    elif student.tshirt_option == "partial":
+                        tshirt_status = "Partial Payment"
             row_data.append(tshirt_status)
-        elif header.count("T-shirt Status") == 0:  # Write header if not a t-shirt department
-            writer.writerow(header)
 
-        writer.writerow(row_data)
+        # Write data to the Excel sheet
+        for col_num, cell_value in enumerate(row_data, 1):
+            sheet.cell(row=row_num, column=col_num, value=cell_value)
+
+    # Adjust column widths for better readability
+    for col_num, column_title in enumerate(header, 1):
+        column_letter = get_column_letter(col_num)
+        sheet.column_dimensions[column_letter].width = max(len(str(column_title)), 15)
+
+    # Prepare HTTP response with Excel file
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = 'attachment; filename="students.xlsx"'
+    workbook.save(response)
 
     return response
 
@@ -403,3 +427,37 @@ def update_tshirt_payment(request, ref_number):
         messages.error(request, "Invalid T-shirt payment update request.")
     
     return redirect('administrators:student_detail', ref_number=student.ref_number)
+
+
+@login_required
+def filtered_student_list(request, filter_type):
+    if request.user.is_superuser:
+        students = Student.objects.select_related("department", "payment").all()
+    else:
+        department = request.user.departmentadmin.department
+        students = Student.objects.select_related("department", "payment").filter(
+            department=department
+        )
+
+    # Apply filters based on filter_type
+    if filter_type == 'paid':
+        students = students.filter(payment__status='Successful')
+    elif filter_type == 'pending':
+        students = students.filter(payment__status='Pending', payment__method='Cash')
+    # 'all' doesn't need additional filtering
+
+    # Sort by creation date
+    students = students.order_by('-created_at')
+
+    # Pagination - 10 per page
+    paginator = Paginator(students, 10)
+    page_number = request.GET.get("page", 1)
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "page_obj": page_obj,
+        "filter_type": filter_type,
+        "query": "",  # Empty query for search form
+    }
+    
+    return render(request, "administrators/student_list.html", context)
