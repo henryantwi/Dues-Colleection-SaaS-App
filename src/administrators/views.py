@@ -17,7 +17,7 @@ from openpyxl.utils import get_column_letter
 
 
 from payments.models import Payment
-from students.models import Student
+from students.models import Student, Department
 
 from .forms import EmailAuthenticationForm
 
@@ -165,6 +165,20 @@ def admin_dashboard(request):
             .order_by("-created_at")[:5]
         )
 
+    # Add department statistics for superadmin
+    department_stats = None
+    if request.user.is_superuser:
+        department_stats = []
+        departments = Department.objects.filter(is_active=True)
+        for dept in departments:
+            dept_students = Student.objects.filter(department=dept)
+            dept_stats = {
+                'name': dept.full_name or dept.name,
+                'total_students': dept_students.count(),
+                'paid_students': dept_students.filter(payment__status="Successful").distinct().count(),
+            }
+            department_stats.append(dept_stats)
+
     # Format recent payments for display with additional checks
     recent_activities = []
     for payment in recent_payments:
@@ -191,6 +205,7 @@ def admin_dashboard(request):
         "paid_students": paid_students,
         "pending_payments": pending_payments,
         "recent_activities": recent_activities,
+        "department_stats": department_stats,  # Add to context
     }
 
     return render(request, "administrators/admin_dashboard.html", context)

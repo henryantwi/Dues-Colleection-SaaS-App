@@ -125,6 +125,33 @@
             </a>
         </div>
 
+        {% if request.user.is_superuser and department_stats %}
+        <!-- Department Statistics -->
+        <div class="glass-card p-4 sm:p-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Department Statistics</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for dept in department_stats %}
+                <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors duration-200">
+                    <h3 class="font-semibold text-gray-900 mb-2">{{ dept.name }}</h3>
+                    <div class="space-y-1">
+                        <p class="text-sm text-gray-600">
+                            Total Students: <span class="font-medium text-gray-900">{{ dept.total_students }}</span>
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            Paid Students: <span class="font-medium text-gray-900">{{ dept.paid_students }}</span>
+                        </p>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                            <div class="bg-blue-600 h-2 rounded-full" 
+                                 style="width: {% widthratio dept.paid_students dept.total_students 100 %}%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Layout for all screen sizes -->
         <div class="grid grid-cols-1 gap-6 sm:gap-8">
             <!-- Quick Search -->

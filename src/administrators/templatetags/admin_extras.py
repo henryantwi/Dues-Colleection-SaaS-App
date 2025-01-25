@@ -22,3 +22,19 @@ def currency_format(value):
         return "{:,.2f}".format(float(value))
     except (ValueError, TypeError):
         return value
+
+@register.filter
+def multiply(value, arg):
+    """Multiply the arg by the value"""
+    try:
+        return float(value) * float(arg)
+    except (ValueError, TypeError):
+        return 0
+
+@register.filter
+def divisibleby(value, arg):
+    """Divide value by arg"""
+    try:
+        return float(value) / float(arg)
+    except (ValueError, TypeError, ZeroDivisionError):
+        return 0
