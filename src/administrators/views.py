@@ -216,7 +216,7 @@ def admin_dashboard(request):
 def student_detail(request, ref_number):
     student = get_object_or_404(Student, ref_number=ref_number)
 
-    # Check if user/admin has permission to view this student
+    # Check if user/admin has permIission to view this student
     if not request.user.is_superuser and request.user.department != student.department:
         raise Http404("Student not found")
 

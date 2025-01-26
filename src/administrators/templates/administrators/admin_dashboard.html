@@ -72,7 +72,7 @@
 
             <!-- Total Students Card -->
             <a href="{% url 'administrators:filtered_students' filter_type='all' %}" 
-               class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer">
+               class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 p-3 rounded-xl bg-blue-100">
                         <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,7 +81,12 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Total Students</dt>
+                            <dt class="text-sm font-medium text-gray-500 truncate flex items-center gap-2">
+                                Total Students
+                                <svg class="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </dt>
                             <dd class="text-2xl font-bold text-gray-900">{{ total_students }}</dd>
                         </dl>
                     </div>
@@ -90,7 +95,7 @@
 
             <!-- Paid Students Card -->
             <a href="{% url 'administrators:filtered_students' filter_type='paid' %}"
-               class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer">
+               class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 p-3 rounded-xl bg-blue-100">
                         <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -99,7 +104,12 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Paid Students</dt>
+                            <dt class="text-sm font-medium text-gray-500 truncate flex items-center gap-2">
+                                Paid Students
+                                <svg class="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </dt>
                             <dd class="text-2xl font-bold text-gray-900">{{ paid_students }}</dd>
                         </dl>
                     </div>
@@ -108,7 +118,7 @@
 
             <!-- Pending Payments Card -->
             <a href="{% url 'administrators:filtered_students' filter_type='pending' %}"
-               class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer">
+               class="glass-card p-6 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 p-3 rounded-xl bg-blue-100">
                         <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,7 +127,12 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Pending Payments</dt>
+                            <dt class="text-sm font-medium text-gray-500 truncate flex items-center gap-2">
+                                Pending Payments
+                                <svg class="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </dt>
                             <dd class="text-2xl font-bold text-gray-900">{{ pending_payments }}</dd>
                         </dl>
                     </div>
