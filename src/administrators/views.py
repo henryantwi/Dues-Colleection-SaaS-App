@@ -364,6 +364,9 @@ def download_students_excel(request):
             payment_status = student.payment.status
             payment_reference = student.payment.reference
             payment_amount = student.payment.amount
+            # Subtract service charge for cash payments
+            if student.payment.method == "Cash":
+                payment_amount = payment_amount - student.department.service_charge
 
         # Base row data
         row_data = [
